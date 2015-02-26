@@ -2,6 +2,7 @@ Midistream
 ==========
 
 Module to synthesize and playback MIDI commands from `Python for Android <https://github.com/kivy/python-for-android>`_.
+Generated documentation: http://midistream.readthedocs.org
 
 
 Related resources
