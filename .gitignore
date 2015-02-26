@@ -1,0 +1,9 @@
+midistream.c
+build/
+docs/_build/
+*~
+*.swp
+*.sublime-workspace
+*.pyo
+*.pyc
+*.so
