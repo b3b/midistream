@@ -15,7 +15,7 @@ API
 
         Syntesizer configuration dictionary
 
-    .. py:method:: run()
+    .. py:method:: start()
 
         Start MIDI rendering and playback
 
