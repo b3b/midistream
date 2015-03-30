@@ -1,9 +1,9 @@
 Usage Example
 -------------
 
-    >>> from miditrack import Midi
+    >>> from midistream import Midi
     >>> midi = Midi()
-    >>> midi.run()
+    >>> midi.start()
     >>> print midi.config.keys()
     ['numChannels', 'buildGUID', 'mixBufferSize', 'filterEnabled', 'maxVoices',
     'libVersion', 'sampleRate', 'buildTimeStamp', 'checkedVersion']
