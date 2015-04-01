@@ -5,6 +5,8 @@ Module to synthesize and playback MIDI commands from `Python for Android <https:
 
 Generated documentation: http://midistream.readthedocs.org
 
+Example of instrument on Android: `video <http://www.youtube.com/watch?v=Ltf9x0rJQMc>`_.
+
 
 Related resources
 -----------------
