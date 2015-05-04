@@ -1,8 +1,10 @@
 import os
+import traceback
 try:
     import cPickle as pickle
 except:
     import pickle
+from kivy.base import runTouchApp
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.utils import platform
@@ -12,6 +14,7 @@ from instrument import Instrument
 from joystick import Joystick, JoystickButton
 from recorder import Recorder
 from controls import VelocitySlider, ControlsLayout
+from error_message import ErrorMessage
 
 
 class DummyMidi(object):
@@ -54,6 +57,28 @@ class InstrumentApp(App):
     def on_stop(self):
         self.save_state()
         self.midi.stop()
+
+    def run(self):
+        try:
+            super(InstrumentApp, self).run()
+        except Exception as e:
+            msg = "Error: {type}{args}".format(type=type(e),
+                                               args=e.args)
+            Logger.exception(msg)
+            if not getattr(self, 'exeption_state', False):
+                self.exeption_state = True
+                msg = '\n'.join((msg, traceback.format_exc()))
+                message = ErrorMessage(message=msg)
+
+                def raise_exception(*args, **kwargs):
+                    raise Exception(msg)
+
+                message.bind(on_dismiss=raise_exception)
+                message.open()
+                try:
+                    runTouchApp()
+                except:
+                    pass
 
     def register_instrument(self, instrument):
         '''Connect instrument to synthesizer
