@@ -26,8 +26,15 @@
                 VelocitySlider:
                     id: velocity
                     instrument: joystick
+                Label:
+                    text: 'Volume'
+                    size_hint_y: None
+                    height: '20sp'
+                Label:
+                    size_hint_y: None
+                    height: '1sp'
                 Button:
-                    text: 'mod'
+                    text: 'modulation wheel'
                     on_state: joystick.toggle_control('mod', 127 if self.state == 'down' else 0)
                     size_hint_y: None
                     height: '80sp'
