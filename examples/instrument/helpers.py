@@ -85,3 +85,9 @@ midi_instruments = {
     121: 'Guitar Fret Noise', 122: 'Breath Noise', 123: 'Seashore', 124: 'Bird Tweet',
     125: 'Telephone Ring', 126: 'Helicopter', 127: 'Applause', 128: 'Gunshot'
 }
+
+midi_notes = range(128)
+
+def note_name(note):
+    notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+    return notes[note % len(notes)]
