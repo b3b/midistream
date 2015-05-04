@@ -34,6 +34,19 @@ def midi_control_change(controller, value, channel=0):
     status = 0xB0 + channel
     return [status, controller, value]
 
+def midi_command_increase_channel(command, inc):
+    '''Increase channel number
+    >>> command = [177, 7, 127]
+    >>> midi_command_increase_channel(command, -7)
+    [170, 7, 127]
+    >>> command
+    [177, 7, 127]
+    '''
+    if command:
+        command = command[:]
+        command[0] += inc
+    return command
+
 midi_controllers = {
     'mod': 1,
     'volume': 7,
