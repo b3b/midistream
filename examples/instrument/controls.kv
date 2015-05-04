@@ -1,0 +1,19 @@
+<VelocitySlider>:
+    orientation: 'vertical'
+    min: 0
+    max: 127
+
+<ConfirmPopup>:
+    cols:1
+    Label:
+        text: root.text
+    GridLayout:
+        cols: 2
+        size_hint_y: None
+        height: '44sp'
+        Button:
+            text: 'Yes'
+            on_release: root.dispatch('on_answer','yes')
+        Button:
+            text: 'No'
+            on_release: root.dispatch('on_answer', 'no')

@@ -1,0 +1,72 @@
+<NoteSelectPopup>:
+    id: popup
+    size_hint: 1, 1
+    auto_dismiss: False
+    title: "Select instrument and note ({}:{})".format(self.selected_instrument, self.selected_note)
+    actions: actions
+    panel: panel
+    notes: notes
+    instruments: instruments
+    selected_note: notes.selection
+    selected_instrument: instruments.selection
+    notes_tab: notes_tab
+    instruments_tab: instruments_tab
+
+    BoxLayout:
+        orientation: 'vertical'
+        TabbedPanel:
+            id: panel
+            do_default_tab: False
+            TabbedPanelItem:
+                id: notes_tab
+                text: 'Note'
+                ScrollView:
+                    NotesLayout:
+                        id: notes
+            TabbedPanelItem:
+                id: instruments_tab
+                text: 'Instrument'
+                ScrollView:
+                    InstrumentsLayout:
+                        id: instruments
+                        size_hint_y: None
+                        height: self.minimum_height
+
+        BoxLayout:
+            size_hint_y: .1
+            id: actions
+            Button:
+                id: add
+                text: 'Add button'
+                on_press: root.set_action('add')
+            Button:
+                id: update
+                text: 'Update button'
+                on_press: root.set_action('update')
+            Button:
+                id: delete
+                text: 'Remove button'
+                on_press: root.set_action('del')
+            Button:
+                id: cancel
+                text: 'Cancel'
+                on_press: root.dismiss()
+
+<InstrumentButton>:
+    group: 'instruments'
+    text: self.format_text()
+    size_hint: None, None
+    text_size: self.width - 4, None
+    font_size: '12sp'
+    halign: 'center'
+    height: max(self.texture_size[1], self.font_size * 4)
+    on_press: self.parent.selection = self.value
+
+<NoteButton>:
+    group: 'notes'
+    text: self.format_text()
+    size_hint: None, None
+    height: self.font_size * 2
+    width: self.font_size * 4
+    halign: 'center'
+    on_press: self.parent.selection = self.value

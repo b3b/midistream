@@ -1,0 +1,59 @@
+#:kivy 1.1.0
+
+<MainLayout>:
+    BoxLayout:
+        orientation: 'horizontal'
+        ControlsLayout:
+            id: controls_layout
+            size_hint_x: .6
+            controls: controls.__self__
+            edit_mode_controls: edit_mode_controls.__self__
+            instrument: joystick
+            orientation: 'vertical'
+            BoxLayout:
+                size_hint: None, None
+                height: '50sp'
+                width: '200sp'
+                orientation: 'horizontal'
+                Label:
+                    text: 'edit: '
+                Switch:
+                    id: edit
+                    on_active: controls_layout.switch_mode(edit=self.active)
+            BoxLayout:
+                orientation: 'vertical'
+                id: controls
+                VelocitySlider:
+                    id: velocity
+                    instrument: joystick
+                Button:
+                    text: 'mod'
+                    on_state: joystick.toggle_control('mod', 127 if self.state == 'down' else 0)
+                    size_hint_y: None
+                    height: '80sp'
+                Recorder:
+                    instrument: joystick
+                    reproducer: reproducer
+                    size_hint_y: None
+                    height: '80sp'
+            BoxLayout:
+                orientation: 'vertical'
+                id: edit_mode_controls
+                on_parent: if not edit.active: controls_layout.remove_widget(self)
+                Button:
+                    text: 'clear'
+                    size_hint_y: None
+                    height: '50sp'
+                    on_release: controls_layout.confirm_clear()
+        Joystick:
+            id: joystick
+            name: 'main joystick'
+            edit_mode: edit.active
+            channel: app.register_instrument(self)
+        Label:
+            size_hint: 1, 1
+            #:set help_text 'Double click to add note\nDouble click note to edit'
+            text: help_text if (joystick.edit_mode and not joystick.buttons) else ''
+        Reproducer:
+            id: reproducer
+            channel: app.register_instrument(self)

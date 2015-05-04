@@ -1,0 +1,18 @@
+<Recorder>:
+    Button:
+        canvas:
+            Color:
+                rgba: (.7, .1, .1, .5) if root.state == 'rec' else (0, 0, 0, 0)
+            Ellipse:
+                size: self.size[1] / 2, self.size[1] / 2
+                pos: self.center[0] - self.size[1] / 4, self.center[1] - self.size[1] / 4
+        text: 'rec'
+        on_press: root.toggle_recording()
+    Button:
+        canvas:    
+            Color:
+                rgba: (.1, .7, .1, .5) if root.state == 'play' else (0, 0, 0, 0)
+            Triangle:
+                points: [self.center[0] - self.height * .3, self.center[1] - self.height * .3] + [self.center[0] + self.height * .3, self.center[1]]  + [self.center[0] - self.height * .3, self.center[1] + self.height * .3]
+        text:'play'
+        on_press: root.toggle_play()

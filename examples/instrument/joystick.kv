@@ -1,0 +1,22 @@
+#:import note_name helpers.note_name
+<JoystickButton>:
+    size: 100, 100
+    size_hint: None, None
+    title: "{}:{}{}".format(self.program, self.note, note_name(self.note))
+
+    canvas:
+        Color:
+            rgba: self.color_play if self.play else self.color_normal
+        Rectangle:
+            size: self.size
+
+    Label:
+        size: root.size
+        size_hint: None, None
+        text: root.title
+
+<Joystick>:
+    note_select: note_select.__self__
+    NoteSelectPopup:
+        id: note_select
+        on_parent: if self.parent == root: root.remove_widget(self)
