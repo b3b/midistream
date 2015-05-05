@@ -20,3 +20,17 @@ Build
 -----
 
 Module is built from python-for-android recipe: `midistream/recipe.sh <https://github.com/b3b/python-for-android/blob/midistream/recipes/midistream/recipe.sh>`_.
+
+
+Examples
+--------
+
+See examples/ directory.
+
+
+examples/instrument could be build with `buildozer <https://github.com/kivy/buildozer>`_.
+`make` command should be run first - this will use python-for-android fork with midistream recipe for building. Like::
+
+  cd examples/instrument
+  make
+  buildozer android deploy run logcat
