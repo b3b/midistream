@@ -1,1 +1,5 @@
-state.cfg
+/state.cfg
+/.buildozer
+/bin
+/midistream-python-for-android
+
