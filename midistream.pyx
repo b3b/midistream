@@ -18,7 +18,7 @@ class EASException(Exception):
 
 include "eas.pxi"
 
-class Midi(threading.Thread, EAS):
+class Midi(threading.Thread):
 
     def __init__(self):
         super(Midi, self).__init__()
