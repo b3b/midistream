@@ -5,7 +5,7 @@ from kivy.properties import BooleanProperty, NumericProperty, StringProperty, Li
 import threading
 import time
 from collections import deque
-from helpers import midi_command_increase_channel
+from helpers import midi_command_increase_channel, midi_program_change
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), 'recorder.kv'))
 
@@ -53,13 +53,13 @@ class Recorder(BoxLayout):
             self.stop_playing()
 
     def stop_recording(self):
-        # record pause
-        self.record_command(self.instrument, None)
         if self.reproducer:
             # record program change
-            self.reproducer.program = self.program
-            self.record_command(self.reproducer,
-                                self.reproducer.command)
+            cmd = midi_program_change(self.program,
+                                      self.instrument.channel)
+        else:
+            cmd = None # record pause
+        self.record_command(self.reproducer, cmd)
 
     def stop_playing(self):
         reproducer = self.reproducer or self.instrument
