@@ -15,6 +15,15 @@ API
 
         Syntesizer configuration dictionary
 
+    .. py:attribute:: reverb
+
+       Reverberation effect, could be set to:
+         * "large hall"
+         * "hall"
+         * "chamber"
+         * "room"
+         * *None* - no effect
+
     .. py:method:: start()
 
         Start MIDI rendering and playback

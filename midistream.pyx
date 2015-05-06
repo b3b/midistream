@@ -29,6 +29,7 @@ class Midi(threading.Thread):
         self.eas = None
         self._exception = None
         self.lock = threading.RLock()
+        self._reverb = None
 
     @property
     def exception(self):
@@ -43,6 +44,30 @@ class Midi(threading.Thread):
         if self._exception:
             raise self._exception
         self.commands.put((status, data1, data2))
+
+    @property
+    def reverb(self):
+        return self._reverb
+
+    @reverb.setter
+    def reverb(self, value):
+        try:
+            preset = {'large hall': EAS_PARAM_REVERB_LARGE_HALL,
+                      'hall': EAS_PARAM_REVERB_HALL,
+                      'chamber': EAS_PARAM_REVERB_CHAMBER,
+                      'room': EAS_PARAM_REVERB_ROOM
+            }[value]
+        except KeyError:
+            preset = None
+        if preset is None:
+            with self._eas_call():
+                self.eas.set_parameter(EAS_MODULE_REVERB, EAS_PARAM_REVERB_BYPASS, True)
+            self._reverb = None
+        else:
+            with self._eas_call():
+                self.eas.set_parameter(EAS_MODULE_REVERB, EAS_PARAM_REVERB_PRESET, preset)
+                self.eas.set_parameter(EAS_MODULE_REVERB, EAS_PARAM_REVERB_BYPASS, False)
+            self._reverb = value
 
     def run(self):
         self.eas = EAS()

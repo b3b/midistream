@@ -29,3 +29,4 @@ cdef extern:
     EAS_RESULT EAS_CloseMIDIStream(void *pEASData, void *midiHandle)
     EAS_RESULT EAS_WriteMIDIStream(void *pEASData, void *streamHandle, void *pBuffer, EAS_I32 count)
     EAS_RESULT EAS_Render(void * pEASData, void *pOut, EAS_I32 numRequested, EAS_I32 *pNumGenerated)
+    EAS_RESULT EAS_SetParameter(void *pEASData, EAS_I32 module, EAS_I32 param, EAS_I32 value)

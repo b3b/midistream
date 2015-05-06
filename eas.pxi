@@ -1,5 +1,17 @@
 EAS_SUCCESS = 0
 
+EAS_MODULE_REVERB = 2
+
+(EAS_PARAM_REVERB_BYPASS,
+ EAS_PARAM_REVERB_PRESET,
+ EAS_PARAM_REVERB_WET,
+ EAS_PARAM_REVERB_DRY) = range(4)
+
+(EAS_PARAM_REVERB_LARGE_HALL,
+ EAS_PARAM_REVERB_HALL,
+ EAS_PARAM_REVERB_CHAMBER,
+ EAS_PARAM_REVERB_ROOM) = range(4)
+
 cdef class EAS:
 
     cdef:
@@ -79,6 +91,12 @@ cdef class EAS:
                                status=status,
                                data1=data1,
                                data2=data2)
+
+    def set_parameter(self, module, parameter, value):
+        result = EAS_SetParameter(self.eas_handle, module, parameter, value)
+        if result != EAS_SUCCESS:
+            raise EASException('EAS_SetParameter', result,
+                               module=module, parameter=parameter, value=value)
 
     def render(self, sample):
         cdef:
