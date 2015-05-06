@@ -17,12 +17,12 @@ API
 
     .. py:attribute:: reverb
 
-       Reverberation effect, could be set to:
-         * "large hall"
-         * "hall"
-         * "chamber"
-         * "room"
-         * *None* - no effect
+        Reverberation effect, could be set to:
+          * "large hall"
+          * "hall"
+          * "chamber"
+          * "room"
+          * *None* - no effect
 
     .. py:method:: start()
 
