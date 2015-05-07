@@ -1,6 +1,7 @@
 import os
 from kivy.uix.slider import Slider
 from kivy.uix.popup import Popup
+from kivy.uix.dropdown import DropDown
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.properties import ObjectProperty, StringProperty
@@ -56,6 +57,7 @@ class ControlsLayout(BoxLayout):
                       size_hint=(None, None),
                       size=(480,400),
                       auto_dismiss=False)
+        self.reverb_dropdown = ReverbDropdown()
         
     def switch_mode(self, edit):
         if edit:
@@ -73,3 +75,5 @@ class ControlsLayout(BoxLayout):
             self.instrument.clear_state()
         self.popup.dismiss()
 
+class ReverbDropdown(DropDown):
+    text = StringProperty('disabled')

@@ -13,9 +13,8 @@ from helpers import midi_channels
 from instrument import Instrument
 from joystick import Joystick, JoystickButton
 from recorder import Recorder
-from controls import VelocitySlider, ControlsLayout
+from controls import VelocitySlider, ControlsLayout, ReverbDropdown
 from error_message import ErrorMessage
-
 
 class DummyMidi(object):
 
@@ -92,6 +91,9 @@ class InstrumentApp(App):
 
     def on_midi_command(self, instrument, command):
         self.midi.write_short(*command)
+
+    def reverb(self, preset):
+        self.midi.reverb = preset
 
     @property
     def state_path(self):

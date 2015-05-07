@@ -27,7 +27,7 @@
                     id: velocity
                     instrument: joystick
                 Label:
-                    text: 'Volume'
+                    text: 'volume'
                     size_hint_y: None
                     height: '20sp'
                 Label:
@@ -43,6 +43,17 @@
                     reproducer: reproducer
                     size_hint_y: None
                     height: '80sp'
+                BoxLayout:
+                    size_hint_y: None
+                    height: '50sp'
+                    orientation: 'horizontal'
+                    Label:
+                        text: 'reverb: '
+                    Button:
+                        text: controls_layout.reverb_dropdown.text
+                        size_hint_y: None
+                        height: '50sp'
+                        on_release: controls_layout.reverb_dropdown.open(self)
             BoxLayout:
                 orientation: 'vertical'
                 id: edit_mode_controls

@@ -17,3 +17,27 @@
         Button:
             text: 'No'
             on_release: root.dispatch('on_answer', 'no')
+
+<ReverbPreset@Button>:
+    size_hint_y: None
+    height: '50sp'
+
+<ReverbDropdown>:
+    on_select:
+        self.text = args[1]
+        app.reverb(args[1])
+    ReverbPreset:
+        text: 'large hall'
+        on_release: root.select(self.text)
+    ReverbPreset:
+        text: 'hall'
+        on_release: root.select(self.text)
+    ReverbPreset:
+        text: 'chamber'
+        on_release: root.select(self.text)
+    ReverbPreset:
+        text: 'room'
+        on_release: root.select(self.text)
+    ReverbPreset:
+        text: 'disabled'
+        on_release: root.select(self.text)
