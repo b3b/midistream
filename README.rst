@@ -30,9 +30,7 @@ Examples
 See examples/ directory.
 
 
-examples/instrument could be build with `buildozer <https://github.com/kivy/buildozer>`_.
-`make` command should be run first - this will use python-for-android fork with midistream recipe for building. Like::
+examples/instrument could be build with `buildozer <https://github.com/kivy/buildozer>`_.. Like::
 
   cd examples/instrument
-  make
-  buildozer android deploy run logcat
+  buildozer android debug deploy run logcat
