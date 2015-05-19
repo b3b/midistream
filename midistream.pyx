@@ -20,7 +20,7 @@ include "eas.pxi"
 
 class Midi(threading.Thread):
 
-    def __init__(self):
+    def __init__(self, output_path=None):
         super(Midi, self).__init__()
         self.daemon = True
         self._stop_thread = threading.Event()
@@ -30,6 +30,11 @@ class Midi(threading.Thread):
         self._exception = None
         self.lock = threading.RLock()
         self._reverb = None
+
+        if output_path:
+            self.output = open(output_path, 'wb')
+        else:
+            self.output = None
 
     @property
     def exception(self):
@@ -73,7 +78,7 @@ class Midi(threading.Thread):
         self.eas = EAS()
 
         with self._eas_call():
-            self.eas.init()
+            self.eas.init(self.output)
 
         if self._stop_thread.isSet():
             return

@@ -25,6 +25,7 @@ cdef class EAS:
 
        char *out
        str out_bytes
+       object fout
 
     def __cinit__(self):
         self.num_buffers = 1
@@ -39,7 +40,7 @@ cdef class EAS:
     def buffer_size(self):
         return self.out_buffer_size
 
-    def init(self):
+    def init(self, output):
         cdef EAS_RESULT result
         result = EAS_Init(&self.eas_handle)
         if result != EAS_SUCCESS:
@@ -48,6 +49,7 @@ cdef class EAS:
         self.eas_buffer_size_samples = cfg['mixBufferSize']
         self.sample_size = cfg['numChannels'] * sizeof(EAS_PCM)
         self.out_buffer_size = self.eas_buffer_size_samples * self.sample_size * self.num_buffers
+        self.fout = output
 
     def shutdown(self):
         EAS_Shutdown(self.eas_handle)
@@ -109,6 +111,10 @@ cdef class EAS:
         out_len = count * self.sample_size
         if out_len < self.out_buffer_size:
             sample.write(self.out_bytes[:out_len])
+            if self.fout:
+                self.fout.write(self.out_bytes[:out_len])
         else:
             sample.write(self.out_bytes)
+            if self.fout:
+                self.fout.write(self.out_bytes)
         return out_len

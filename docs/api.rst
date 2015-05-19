@@ -24,6 +24,12 @@ API
           * "room"
           * *None* - no effect
 
+    .. py:method:: __init__(output_path=None)
+
+        Constructor
+
+        :param output_path: Optional path to save RAW output
+
     .. py:method:: start()
 
         Start MIDI rendering and playback
