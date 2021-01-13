@@ -1,13 +1,15 @@
 [app]
 title = MIDI instrument example
-version = 0.0.1
+version = 0.0.2
 package.name = easinstrument
 package.domain = org.test
 
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 
-requirements = kivy,midistream
+requirements =
+             kivy==2.0.0,
+             https://github.com/b3b/midistream/archive/master.zip,
 
 orientation = landscape
 fullscreen = 1

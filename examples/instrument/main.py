@@ -25,8 +25,7 @@ class DummyMidi(object):
         Logger.info('midi stop')
 
     def write_short(self, *args):
-        message = "midi: write_shord({})".format(args)
-        Logger.info(message)
+        Logger.info("midi: write_short%s", args)
 
 
 if platform == 'android':
@@ -85,7 +84,7 @@ class InstrumentApp(App):
         :returns: allocated MIDI channel
         '''
         self.instruments.append(instrument)
-        channel = self.channels.next()
+        channel = next(self.channels)
         instrument.bind(command=self.on_midi_command)
         return channel
 

@@ -52,15 +52,17 @@ class NotesLayout(ButtonsLayout):
             self.buttons.append(button)
             self.add_widget(button)
 
+
 class InstrumentsLayout(ButtonsLayout):
 
-    default_selection = midi_instruments.keys()[0]
+    default_selection = 1
 
     def add_buttons(self):
         for n, title in midi_instruments.items():
             button = InstrumentButton(value=n, title=title)
             self.buttons.append(button)
             self.add_widget(button)
+
 
 class NoteSelectPopup(Popup):
     instruments = ObjectProperty()

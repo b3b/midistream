@@ -72,7 +72,7 @@ class Recorder(BoxLayout):
         reproducer = self.reproducer or self.instrument
         reproducer.program = self.program
         while self.state == 'play' and self.session == session:
-            command, t = commands.next()
+            command, t = next(commands)
             if t:
                 time.sleep(t)
             if self.state == 'play' and self.session == session:
