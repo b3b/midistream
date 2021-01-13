@@ -30,7 +30,7 @@ Examples
 See examples/ directory.
 
 
-examples/instrument could be build with `buildozer <https://github.com/kivy/buildozer>`_.. Like::
+examples/instrument could be build with `buildozer <https://github.com/kivy/buildozer>`_. Like::
 
   cd examples/instrument
   buildozer android debug deploy run logcat

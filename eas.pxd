@@ -1,6 +1,6 @@
 cdef extern from "Python.h":
-    object PyString_FromStringAndSize(char *, Py_ssize_t)
-    char* PyString_AsString(object)
+    object PyBytes_FromStringAndSize(char *, Py_ssize_t)
+    char* PyBytes_AsString(object)
 
 cdef extern:
     ctypedef long EAS_RESULT

@@ -1,6 +1,6 @@
 from eas cimport *
 import threading
-import Queue
+import queue
 from jnius import autoclass
 from audiostream import get_output, AudioSample
 from contextlib import contextmanager
@@ -25,7 +25,7 @@ class Midi(threading.Thread):
         self.daemon = True
         self._stop_thread = threading.Event()
         self._exit_thread = threading.Event()
-        self.commands = Queue.Queue()
+        self.commands = queue.Queue()
         self.eas = None
         self._exception = None
         self.lock = threading.RLock()
@@ -116,7 +116,7 @@ class Midi(threading.Thread):
         while not self._stop_thread.isSet():
             try:
                 cmd = self.commands.get_nowait()
-            except Queue.Empty:
+            except queue.Empty:
                 return
             else:
                 with self._eas_call():

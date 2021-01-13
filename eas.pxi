@@ -24,7 +24,7 @@ cdef class EAS:
        EAS_U32 out_buffer_size
 
        char *out
-       str out_bytes
+       bytes out_bytes
        object fout
 
     def __cinit__(self):
@@ -62,10 +62,9 @@ cdef class EAS:
                            NULL)
         if result != EAS_SUCCESS:
             raise EASException('EAS_OpenMIDIStream',  result)
-        self.out_bytes = PyString_FromStringAndSize(NULL,
-                                                    self.out_buffer_size)
-        self.out = PyString_AsString(self.out_bytes)
-        assert(len(self.out_bytes == self.out_bytes_size))
+        self.out_bytes = PyBytes_FromStringAndSize(NULL,
+                                                   self.out_buffer_size)
+        self.out = PyBytes_AsString(self.out_bytes)
 
     def close_stream(self):
         cdef EAS_RESULT result
