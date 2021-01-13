@@ -2,7 +2,7 @@ Midistream
 ==========
 
 Module to synthesize and playback MIDI commands from `Python for Android <https://github.com/kivy/python-for-android>`_.
-Using Sonivox EAS API, that is not oficially suported by Android SDK/NDK.
+Using Sonivox EAS API, that is not officially suported by Android SDK/NDK.
 `Audiostream <https://github.com/kivy/audiostream>`_ is used for playback.
 
 Generated documentation: http://midistream.readthedocs.org
