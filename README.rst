@@ -1,13 +1,16 @@
 Midistream
 ==========
 
-Module to synthesize and playback MIDI commands from `Python for Android <https://github.com/kivy/python-for-android>`_.
+Package to synthesize and playback MIDI commands from `Python for Android <https://github.com/kivy/python-for-android>`_.
 Using Sonivox EAS API, that is not officially suported by Android SDK/NDK.
 `Audiostream <https://github.com/kivy/audiostream>`_ is used for playback.
 
 Generated documentation: http://midistream.readthedocs.org
 
 Example of instrument on Android: `video <http://www.youtube.com/watch?v=Ltf9x0rJQMc>`_.
+
+Since Android no longer allow access to the system `libsonivox.so`, application should contain its own copy of the library.
+*Midistream* uses compiled *libmidi.so* libraries from the `Midi Driver <https://github.com/billthefarmer/mididriver>`_ releases.
 
 
 Related resources
@@ -21,7 +24,17 @@ Related resources
 Build
 -----
 
-Module is built from python-for-android recipe: `midistream/recipe.sh <https://github.com/b3b/python-for-android/blob/midistream/recipes/midistream/recipe.sh>`_.
+
+The following instructions are for building app with `buildozer <https://github.com/kivy/buildozer/>`_ tool.
+
+*buildozer.spec* requirements should include *audiostream*, *midistream* and *mididriver*::
+
+   requirements = 
+               audiostream,
+               mididriver,
+               https://github.com/b3b/midistream/archive/master.zip,
+
+App configuration example: `buildozer.spec <https://github.com/b3b/midistream/blob/master/examples/instrument/buildozer.spec>`_
 
 
 Examples
@@ -30,7 +43,7 @@ Examples
 See examples/ directory.
 
 
-examples/instrument could be build with `buildozer <https://github.com/kivy/buildozer>`_. Like::
+examples/instrument could be build with *buildozer*::
 
   cd examples/instrument
   buildozer android debug deploy run logcat

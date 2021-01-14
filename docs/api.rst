@@ -1,7 +1,10 @@
 API
 ---
 
-.. py:module:: midistream
+.. currentmodule:: midistream
+
+Midi
+^^^^
 
 .. py:class:: Midi
                              
@@ -51,3 +54,13 @@ API
 .. py:class:: EASException
                       
     Syntesizer exception
+
+
+Helpers
+^^^^^^^
+
+.. currentmodule:: midistream.v1.helpers
+
+.. automodule:: midistream.v1.helpers
+    :members:
+

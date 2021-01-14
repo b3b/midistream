@@ -18,7 +18,7 @@ import os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- General configuration ------------------------------------------------
 
@@ -259,3 +259,31 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+
+
+from sphinx.ext.autodoc import DataDocumenter, ModuleLevelDocumenter, SUPPRESS
+from sphinx.util.inspect import object_description
+
+def add_directive_header(self, sig):
+    ModuleLevelDocumenter.add_directive_header(self, sig)
+    if not self.options.annotation:
+        try:
+            objrepr = object_description(self.object)
+
+            # PATCH: truncate the value if longer than 50 characters
+            if len(objrepr) > 50:                  
+                objrepr = objrepr[:50] + "..." 
+
+        except ValueError:
+            pass
+        else:
+            self.add_line(u'   :annotation: = ' + objrepr, '<autodoc>')
+    elif self.options.annotation is SUPPRESS:
+        pass
+    else:
+        self.add_line(u'   :annotation: %s' % self.options.annotation,
+                      '<autodoc>')
+
+DataDocumenter.add_directive_header = add_directive_header
+

@@ -4,7 +4,7 @@ Usage Example
     >>> from midistream import Midi
     >>> midi = Midi('/mnt/sdcard/example.raw') # not only play, but also save output to example.raw
     >>> midi.start()
-    >>> print midi.config.keys()
+    >>> print(midi.config.keys())
     ['numChannels', 'buildGUID', 'mixBufferSize', 'filterEnabled', 'maxVoices',
     'libVersion', 'sampleRate', 'buildTimeStamp', 'checkedVersion']
     >>> print(midi.config['numChannels'], midi.config['sampleRate'])
@@ -14,6 +14,9 @@ Usage Example
     >>> import time ; time.sleep(2)
     >>> midi.write_short(0x80, 60, 127) # Off middle C note with maximum velocity
     >>> midi.reverb = None # Disable reverb effect
+    # Using helpers
+    >>> from midistream.v1.helpers import midi_note_off
+    >>> midi.write_short(*midi_note_off(60))
 
 
  Format of saved "example.raw" depends on system MIDI configuration.
