@@ -5,7 +5,6 @@ from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.clock import Clock
 from kivy.lang import Builder
-from helpers import note_name
 from instrument import Instrument
 from noteselect import NoteSelectPopup
 

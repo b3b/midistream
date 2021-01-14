@@ -1,7 +1,7 @@
 from kivy.properties import (BooleanProperty, NumericProperty, BoundedNumericProperty,
                              StringProperty, ListProperty, OptionProperty)
-from helpers import (midi_note_on, midi_note_off, midi_program_change,
-                     midi_controllers, midi_control_change)
+from midistream.v1.helpers import (midi_note_on, midi_note_off, midi_program_change,
+                                   midi_controllers, midi_control_change)
 
 
 class Instrument(object):
@@ -20,7 +20,7 @@ class Instrument(object):
             velocity = self.velocity
         channel = self.channel
         if state:
-            command = midi_note_on(note, velocity, channel)
+            command = midi_note_on(note, channel, velocity)
             self.played_notes.add(note)
             self.notes_on.add(note)
         else:

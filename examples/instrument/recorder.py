@@ -5,7 +5,7 @@ from kivy.properties import BooleanProperty, NumericProperty, StringProperty, Li
 import threading
 import time
 from collections import deque
-from helpers import midi_command_increase_channel, midi_program_change
+from midistream.v1.helpers import midi_command_increase_channel, midi_program_change
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), 'recorder.kv'))
 

@@ -9,7 +9,7 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.utils import platform
 from kivy.logger import Logger
-from helpers import midi_channels
+from midistream.v1.helpers import midi_channels
 from instrument import Instrument
 from joystick import Joystick, JoystickButton
 from recorder import Recorder
