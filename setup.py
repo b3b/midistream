@@ -6,9 +6,9 @@ try:
 except ImportError:
     from distutils.command.build_ext import build_ext
 
-    sources = ["midi.c"]
+    sources = ["midistream.c"]
 else:
-    sources = ["midi.pyx"]
+    sources = ["midistream.pyx"]
 
 setup(
     name="midistream",
@@ -16,14 +16,14 @@ setup(
     cmdclass={"build_ext": build_ext},
     ext_modules=[
         Extension(
-            "libsonivox",
-            sources=["sonivox.c"],
-            extra_link_args=["-o", "./libsonivox.so"],
+            "libmidi",
+            sources=["midi.c"],
+            extra_link_args=["-o", "./libmidi.so"],
         ),
         Extension(
-            "midistream.midi",
+            "midistream.midistream",
             sources=sources,
-            libraries=["sonivox"],
+            libraries=["midi"],
             extra_link_args=["-L", "."],
         ),
     ],

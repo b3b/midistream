@@ -1,3 +1,3 @@
-from .midi import EASException, Midi
+from .midistream import EASException, Midi
 
 __all__ = [EASException, Midi]
