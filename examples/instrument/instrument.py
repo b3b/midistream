@@ -46,8 +46,7 @@ class Instrument(object):
         self.command = midi_program_change(program, self.channel)
 
     def toggle_control(self, control, value):
-        number = midi_controllers[control]
-        self.command = midi_control_change(number, value,
+        self.command = midi_control_change(control, value,
                                            channel=self.channel)
 
     def get_state(self):

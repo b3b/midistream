@@ -1,4 +1,5 @@
 #:kivy 1.1.0
+#:import Control midistream.v1.helpers.Control
 
 <MainLayout>:
     BoxLayout:
@@ -35,7 +36,7 @@
                     height: '1sp'
                 Button:
                     text: 'modulation wheel'
-                    on_state: joystick.toggle_control('mod', 127 if self.state == 'down' else 0)
+                    on_state: joystick.toggle_control(Control.modulation, 127 if self.state == 'down' else 0)
                     size_hint_y: None
                     height: '80sp'
                 Recorder:

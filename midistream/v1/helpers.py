@@ -1,5 +1,6 @@
 """Helpers to work with MIDI messages.
 """
+from enum import IntEnum
 from typing import Dict, Generator, List
 
 
@@ -37,7 +38,7 @@ def midi_program_change(program: int, channel: int = 0) -> List[int]:
     return [status, program]
 
 
-def midi_control_change(controller: int, value: int, channel: int = 0) -> List[int]:
+def midi_control_change(controller: int, value: int = 0, channel: int = 0) -> List[int]:
     """MIDI BnH message - control change.
 
     >>> midi_control_change(7, value=127, channel=1)
@@ -62,13 +63,16 @@ def midi_command_increase_channel(command: List[int], inc: int) -> List[int]:
     return command
 
 
-#: MIDI controllers name => code dictionary
-midi_controllers: Dict[str, int] = {
-    "mod": 1,
-    "volume": 7,
-    "pan": 10,
-    "expression": 11,
-}
+
+class Control(IntEnum):
+    """Control function number for Control Change messages.
+
+    See: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
+    """
+    modulation = 1
+    volume = 7
+    pan = 10
+    all_sound_off = 120
 
 
 def midi_channels() -> Generator[int, None, None]:
