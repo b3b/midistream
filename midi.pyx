@@ -25,3 +25,7 @@ cdef EAS_U8 midi_write(EAS_U8 *bytes, EAS_I32 length):
 cdef EAS_U8 midi_setVolume(EAS_I32 volume):
     print(f"midi_setVolume({volume})")
     return _result
+
+cdef EAS_U8 midi_setReverb(EAS_I32 preset):
+    print(f"midi_setReverb({preset})")
+    return _result

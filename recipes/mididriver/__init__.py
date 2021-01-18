@@ -10,9 +10,9 @@ class MididriverRecipe(NDKRecipe):
     """Download and exract Midi Driver compiled libraries."""
     name = "mididriver"
     generated_libraries = ["libmidi.so"]
-    url = "https://github.com/billthefarmer/mididriver/releases/download/v{version}/MidiDriver-{version}.aar"
-    version = "1.19"
-    md5sum = "e569ac60a024a8df64926df0a6f528ae"
+    url = "https://github.com/b3b/mididriver/releases/download/v{version}/MidiDriver-v{version}.aar"
+    version = "1.19py31"
+    sha256sum = "152003f72a8cc6adb77219b1edc4e5a6c7c32bfe853b31ef4d734e847f1f2e73"
 
     def unpack(self, arch):
         build_dir = self.get_build_container_dir(arch)

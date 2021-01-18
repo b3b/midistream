@@ -15,7 +15,7 @@ from recorder import Recorder
 from controls import VelocitySlider, ControlsLayout, ReverbDropdown
 from error_message import ErrorMessage
 
-from midistream import Syntesizer
+from midistream import ReverbPreset, Syntesizer
 
 
 class Reproducer(BoxLayout, Instrument):
@@ -76,7 +76,13 @@ class InstrumentApp(App):
         self.midi.write(command)
 
     def reverb(self, preset):
-        self.midi.reverb = preset
+        self.midi.reverb = {
+            'disabled': ReverbPreset.OFF,
+            'large hall': ReverbPreset.LARGE_HALL,
+            'hall': ReverbPreset.HALL,
+            'chamber': ReverbPreset.CHAMBER,
+            'room': ReverbPreset.ROOM,
+        }[preset]
 
     @property
     def state_path(self):

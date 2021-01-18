@@ -1,7 +1,7 @@
 import pytest
 
 import libmidi
-from midistream import Syntesizer, MIDIException
+from midistream import MIDIException, Syntesizer, ReverbPreset
 
 
 @pytest.fixture(autouse=True)
@@ -41,6 +41,23 @@ def test_volume_set_error():
 
     libmidi._result = 1
     assert Syntesizer().volume == 1
+
+
+def test_reverb_set():
+    assert Syntesizer().reverb != ReverbPreset.ROOM
+    Syntesizer().reverb = ReverbPreset.ROOM
+    assert Syntesizer().reverb == ReverbPreset.ROOM
+
+
+def test_reverb_set_error():
+    Syntesizer().reverb = ReverbPreset.OFF
+
+    libmidi._result = 0
+    with pytest.raises(MIDIException):
+        Syntesizer().reverb = ReverbPreset.ROOM
+
+    libmidi._result = 1
+    assert Syntesizer().reverb == ReverbPreset.OFF
 
 
 def test_closed():

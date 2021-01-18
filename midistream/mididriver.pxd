@@ -25,3 +25,4 @@ cdef extern:
     EAS_U8 midi_shutdown()
     EAS_U8 midi_write(EAS_U8 *bytes, EAS_I32 length)
     EAS_U8 midi_setVolume(EAS_I32 volume)
+    EAS_U8 midi_setReverb(EAS_I32 preset)

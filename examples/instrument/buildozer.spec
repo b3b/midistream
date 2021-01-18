@@ -9,7 +9,6 @@ source.include_exts = py,png,jpg,kv,atlas
 
 requirements =
              kivy==2.0.0,
-             audiostream,
              mididriver,
              https://github.com/b3b/midistream/archive/master.zip,
 

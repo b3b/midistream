@@ -1,3 +1,4 @@
+"""Wrapper for EAS and MidiDriver functions."""
 from mididriver cimport *
 
 
@@ -13,6 +14,10 @@ def get_config():
 
 def set_volume(volume):
     return midi_setVolume(volume)
+
+
+def set_reverb(preset):
+    return midi_setReverb(preset)
 
 
 def close():
