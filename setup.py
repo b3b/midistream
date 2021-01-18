@@ -12,7 +12,7 @@ else:
 
 setup(
     name="midistream",
-    packages=["midistream", "midistream.v1"],
+    packages=["midistream"],
     cmdclass={"build_ext": build_ext},
     ext_modules=[
         Extension(
