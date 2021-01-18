@@ -1,25 +1,17 @@
 Usage Example
 -------------
 
-    >>> from midistream import Midi
-    >>> midi = Midi('/mnt/sdcard/example.raw') # not only play, but also save output to example.raw
-    >>> midi.start()
-    >>> print(midi.config.keys())
-    ['numChannels', 'buildGUID', 'mixBufferSize', 'filterEnabled', 'maxVoices',
-    'libVersion', 'sampleRate', 'buildTimeStamp', 'checkedVersion']
-    >>> print(midi.config['numChannels'], midi.config['sampleRate'])
-    2, 22050
-    >>> midi.reverb = 'large hall' # Enable reverb effect
-    >>> midi.write_short(0x90, 60, 127) # On middle C note with maximum velocity
+    >>> from midistream import ReverbPreset, Syntesizer
+    >>> midi = Syntesizer()
+    >>> midi.config
+    {'libVersion': 50727438, 'checkedVersion': 0, 'ma3xVoices': 64, 'numChannels': 2, 'sampleRate': 22050, 'mixBufferSize': 128, 'filterEnabled': 1, 'buildTimeStamp': 1195621085, 'buildGUID': b'1feda229-b9a8-45e9-96f4-73c0a80e7220'}
+    >>> midi.volume
+    90
+    >>> midi.volume = 70 # Set master volume
+    >>> midi.reverb = ReverbPreset.LARGE_HALL # Enable reverb effect
+    >>> midi.write([0x90, 60, 127]) # On middle C note with maximum velocity
     >>> import time ; time.sleep(2)
-    >>> midi.write_short(0x80, 60, 127) # Off middle C note with maximum velocity
-    >>> midi.reverb = None # Disable reverb effect
+    >>> midi.write([0x80, 60, 127]) # Off middle C note with maximum velocity
     # Using helpers
-    >>> from midistream.v1.helpers import midi_note_off
-    >>> midi.write_short(*midi_note_off(60))
-
-
- Format of saved "example.raw" depends on system MIDI configuration.
- This example output could be lately converted to MP3 with avconv::
-
-   avconv -f s16le -ac 2 -ar 22050 -i example.raw example.mp3
+    >>> from midistream.helpers import midi_note_off
+    >>> midi.write_short(midi_note_off(60))

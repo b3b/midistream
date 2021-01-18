@@ -27,12 +27,15 @@ Build
 
 The following instructions are for building app with `buildozer <https://github.com/kivy/buildozer/>`_ tool.
 
-*buildozer.spec* requirements should include *audiostream*, *midistream* and *mididriver*::
+*buildozer.spec* requirements should include *midistream* and *mididriver*,
+path to *midistream* recipes directory should be set::
 
    requirements = 
-               audiostream,
                mididriver,
                https://github.com/b3b/midistream/archive/master.zip,
+
+  p4a.local_recipes = /path/to/cloned/repo/recipes
+
 
 App configuration example: `buildozer.spec <https://github.com/b3b/midistream/blob/master/examples/instrument/buildozer.spec>`_
 
