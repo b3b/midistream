@@ -1,7 +1,7 @@
 import os
 from kivy.lang import Builder
 from kivy.uix.popup import Popup
-from midistream.v1.helpers import midi_instruments, midi_notes, note_name
+from midistream.helpers import midi_instruments, midi_notes, note_name
 from kivy.uix.togglebutton import ToggleButton
 from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty
 from kivy.uix.stacklayout import StackLayout

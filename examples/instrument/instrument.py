@@ -1,6 +1,6 @@
 from kivy.properties import (BooleanProperty, NumericProperty, BoundedNumericProperty,
                              StringProperty, ListProperty, OptionProperty)
-from midistream.v1.helpers import (midi_note_on, midi_note_off, midi_program_change,
+from midistream.helpers import (midi_note_on, midi_note_off, midi_program_change,
                                    midi_control_change)
 
 

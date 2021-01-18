@@ -8,7 +8,7 @@ from kivy.base import runTouchApp
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.logger import Logger
-from midistream.v1.helpers import midi_channels
+from midistream.helpers import midi_channels
 from instrument import Instrument
 from joystick import Joystick, JoystickButton
 from recorder import Recorder

@@ -1,5 +1,5 @@
-'''Sequentially play all the MIDI instruments.
-'''
+"""Sequentially play all the MIDI instruments.
+"""
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -7,7 +7,12 @@ from kivy.properties import NumericProperty, StringProperty
 from kivy.clock import Clock
 from itertools import cycle
 from midistream import Syntesizer
-from midistream.v1.helpers import midi_note_on, midi_note_off, midi_program_change, midi_instruments
+from midistream.helpers import (
+    midi_note_on,
+    midi_note_off,
+    midi_program_change,
+    midi_instruments,
+)
 
 
 class MainLayout(BoxLayout):
@@ -15,7 +20,7 @@ class MainLayout(BoxLayout):
 
 
 class PlayAll(App):
-    instrument = StringProperty('')
+    instrument = StringProperty("")
     note = NumericProperty(0)
     start_note = 60
     end_note = 64
@@ -46,5 +51,5 @@ class PlayAll(App):
         self.note = self.start_note
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     PlayAll().run()
