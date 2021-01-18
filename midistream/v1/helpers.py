@@ -76,7 +76,7 @@ class Control(IntEnum):
 
 
 def midi_channels() -> Generator[int, None, None]:
-    """Generator of MIDI channels numbers.
+    """Generator of MIDI channels numbers, with percussion (9) channel omited.
 
     >>> list(midi_channels())
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15]
@@ -86,7 +86,7 @@ def midi_channels() -> Generator[int, None, None]:
             yield n
 
 
-#: MIDI notes list
+#: All MIDI notes list (from 0 to 127)
 midi_notes: List[int] = list(range(128))
 
 

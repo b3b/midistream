@@ -6,9 +6,9 @@ try:
 except ImportError:
     from distutils.command.build_ext import build_ext
 
-    sources = ["midistream.c"]
+    sources = ["mididriver.c"]
 else:
-    sources = ["midistream.pyx"]
+    sources = ["mididriver.pyx"]
 
 setup(
     name="midistream",
@@ -17,11 +17,11 @@ setup(
     ext_modules=[
         Extension(
             "libmidi",
-            sources=["midi.c"],
+            sources=["midi.pyx"],
             extra_link_args=["-o", "./libmidi.so"],
         ),
         Extension(
-            "midistream.midistream",
+            "midistream.mididriver",
             sources=sources,
             libraries=["midi"],
             extra_link_args=["-L", "."],

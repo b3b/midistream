@@ -7,7 +7,6 @@ except:
 from kivy.base import runTouchApp
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
-from kivy.utils import platform
 from kivy.logger import Logger
 from midistream.v1.helpers import midi_channels
 from instrument import Instrument
@@ -16,22 +15,7 @@ from recorder import Recorder
 from controls import VelocitySlider, ControlsLayout, ReverbDropdown
 from error_message import ErrorMessage
 
-class DummyMidi(object):
-
-    def start(self):
-        Logger.info('midi start')
-
-    def stop(self):
-        Logger.info('midi stop')
-
-    def write_short(self, *args):
-        Logger.info("midi: write_short%s", args)
-
-
-if platform == 'android':
-    from midistream import Midi
-else:
-    Midi = DummyMidi
+from midistream import Syntesizer
 
 
 class Reproducer(BoxLayout, Instrument):
@@ -43,18 +27,18 @@ class MainLayout(BoxLayout):
 class InstrumentApp(App):
 
     def build(self):
-        self.midi = Midi()
+        self.midi = None
         self.instruments = []
         self.channels = midi_channels()
         return MainLayout()
 
     def on_start(self):
-        self.midi.start()
+        self.midi = Syntesizer()
         self.load_state()
 
     def on_stop(self):
         self.save_state()
-        self.midi.stop()
+        self.midi.close()
 
     def run(self):
         try:
@@ -89,7 +73,7 @@ class InstrumentApp(App):
         return channel
 
     def on_midi_command(self, instrument, command):
-        self.midi.write_short(*command)
+        self.midi.write(command)
 
     def reverb(self, preset):
         self.midi.reverb = preset
