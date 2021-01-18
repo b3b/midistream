@@ -11,5 +11,5 @@ Midi
 Helpers
 ^^^^^^^
 
-.. automodule:: midistream.v1.helpers
+.. automodule:: midistream.helpers
     :members:

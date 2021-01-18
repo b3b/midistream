@@ -63,16 +63,15 @@ def midi_command_increase_channel(command: List[int], inc: int) -> List[int]:
     return command
 
 
-
 class Control(IntEnum):
     """Control function number for Control Change messages.
 
     See: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
     """
-    modulation = 1
-    volume = 7
-    pan = 10
-    all_sound_off = 120
+    modulation = 1  #: Modulation Wheel 
+    volume = 7  #: Channel Volume
+    pan = 10  #: Pan
+    all_sound_off = 120  #: All Sound Off
 
 
 def midi_channels() -> Generator[int, None, None]:

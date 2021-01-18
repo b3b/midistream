@@ -10,7 +10,7 @@ Generated documentation: http://midistream.readthedocs.org
 Example of instrument on Android: `video <http://www.youtube.com/watch?v=Ltf9x0rJQMc>`_.
 
 Since Android no longer allow access to the system `libsonivox.so`, application should contain its own copy of the library.
-*Midistream* uses compiled *libmidi.so* libraries from the `Midi Driver <https://github.com/billthefarmer/mididriver>`_ releases.
+*Midistream* uses compiled *libmidi.so* libraries from the Bill Farmer `Midi Driver <https://github.com/billthefarmer/mididriver>`_ releases.
 
 
 Related resources
