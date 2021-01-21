@@ -1,5 +1,6 @@
 """Helpers to work with MIDI messages.
 """
+import re
 from enum import IntEnum
 from typing import Dict, Generator, List
 
@@ -102,6 +103,75 @@ def note_name(note: int) -> str:
     name = notes[note % len(notes)]
     octave = note // 12 - 1
     return f"{name}{octave}"
+
+
+def parse_note(text: str) -> int:
+    """Parse note number from text.
+
+    :param text: [Note name](optional: "s" - sharp, "b" - flat)[octave number]
+    :raises: ValueError
+
+    >>> parse_note("C4")
+    60
+    >>> parse_note("Cs4")
+    61
+    >>> parse_note("Cb4")
+    59
+    """
+    match = re.match(
+        r"""
+    ^(?P<note>[A-G])
+    (?P<accidental>[B|S])?
+    (?P<octave>[0-9])$
+    """,
+        text.upper(),
+        re.VERBOSE,
+    )
+
+    if not match:
+        raise ValueError("Note is not parsable.")
+
+    octave = 12 * int(match.group("octave"))
+    note = {
+        "C": 12,
+        "D": 14,
+        "E": 16,
+        "F": 17,
+        "G": 19,
+        "A": 21,
+        "B": 23,
+    }[match.group("note")]
+    accidental = {
+        "B": -1,
+        None: 0,
+        "S": 1,
+    }[match.group("accidental")]
+
+    value = octave + note + accidental
+    if value <= 127:
+        return value
+    raise ValueError("Note out of MIDI bounds.")
+
+
+class NoteMeta(type):
+    def __getattr__(self, name):
+        if not name.startswith("_"):
+            return parse_note(name)
+        return super().__getattr__(name)
+
+
+class Note(metaclass=NoteMeta):
+    """Note number.
+
+    >>> Note.A0
+    21
+    >>> Note.As0
+    22
+    >>> Note.Ab0
+    20
+    >>> Note.G9
+    127
+    """
 
 
 #: MIDI instruments number => name dictionary
