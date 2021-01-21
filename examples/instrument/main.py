@@ -15,7 +15,7 @@ from recorder import Recorder
 from controls import VelocitySlider, ControlsLayout, ReverbDropdown
 from error_message import ErrorMessage
 
-from midistream import ReverbPreset, Syntesizer
+from midistream import ReverbPreset, Synthesizer
 
 
 class Reproducer(BoxLayout, Instrument):
@@ -33,7 +33,7 @@ class InstrumentApp(App):
         return MainLayout()
 
     def on_start(self):
-        self.midi = Syntesizer()
+        self.midi = Synthesizer()
         self.load_state()
 
     def on_stop(self):

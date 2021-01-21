@@ -1,3 +1,3 @@
-from .facade import MIDIException, ReverbPreset, Syntesizer
+from .facade import MIDIException, ReverbPreset, Synthesizer
 
-__all__ = ["MIDIException", "ReverbPreset", "Syntesizer"]
+__all__ = ["MIDIException", "ReverbPreset", "Synthesizer"]

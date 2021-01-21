@@ -1,75 +1,75 @@
 import pytest
 
 import libmidi
-from midistream import MIDIException, Syntesizer, ReverbPreset
+from midistream import MIDIException, Synthesizer, ReverbPreset
 
 
 @pytest.fixture(autouse=True)
 def uninitialized_midi():
-    Syntesizer._started = False
+    Synthesizer._started = False
     libmidi._result = 1
 
 
 def test_initizlized():
-    Syntesizer()
-    assert Syntesizer._started
+    Synthesizer()
+    assert Synthesizer._started
 
 
 def test_init_error():
     libmidi._result = 0
     with pytest.raises(MIDIException):
-        Syntesizer()
-    assert not Syntesizer._started
+        Synthesizer()
+    assert not Synthesizer._started
 
 
 def test_config_returned():
-    assert Syntesizer().config['libVersion'] == 0xAABBCCDD
+    assert Synthesizer().config['libVersion'] == 0xAABBCCDD
 
 
 def test_volume_set():
-    assert Syntesizer().volume != 100
-    Syntesizer().volume = 100
-    assert Syntesizer().volume == 100
+    assert Synthesizer().volume != 100
+    Synthesizer().volume = 100
+    assert Synthesizer().volume == 100
 
 
 def test_volume_set_error():
-    Syntesizer().volume = 1
+    Synthesizer().volume = 1
 
     libmidi._result = 0
     with pytest.raises(MIDIException):
-        Syntesizer().volume = 100
+        Synthesizer().volume = 100
 
     libmidi._result = 1
-    assert Syntesizer().volume == 1
+    assert Synthesizer().volume == 1
 
 
 def test_reverb_set():
-    assert Syntesizer().reverb != ReverbPreset.ROOM
-    Syntesizer().reverb = ReverbPreset.ROOM
-    assert Syntesizer().reverb == ReverbPreset.ROOM
+    assert Synthesizer().reverb != ReverbPreset.ROOM
+    Synthesizer().reverb = ReverbPreset.ROOM
+    assert Synthesizer().reverb == ReverbPreset.ROOM
 
 
 def test_reverb_set_error():
-    Syntesizer().reverb = ReverbPreset.OFF
+    Synthesizer().reverb = ReverbPreset.OFF
 
     libmidi._result = 0
     with pytest.raises(MIDIException):
-        Syntesizer().reverb = ReverbPreset.ROOM
+        Synthesizer().reverb = ReverbPreset.ROOM
 
     libmidi._result = 1
-    assert Syntesizer().reverb == ReverbPreset.OFF
+    assert Synthesizer().reverb == ReverbPreset.OFF
 
 
 def test_closed():
-    Syntesizer().close()
-    assert not Syntesizer._started
+    Synthesizer().close()
+    assert not Synthesizer._started
 
 
 def test_write_completed():
-    Syntesizer().write(b'test')
+    Synthesizer().write(b'test')
 
 
 def test_write_error():
     libmidi._result = 0
     with pytest.raises(MIDIException):
-        Syntesizer().write(b'test')
+        Synthesizer().write(b'test')

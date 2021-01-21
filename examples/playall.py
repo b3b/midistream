@@ -6,7 +6,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import NumericProperty, StringProperty
 from kivy.clock import Clock
 from itertools import cycle
-from midistream import Syntesizer
+from midistream import Synthesizer
 from midistream.helpers import (
     midi_note_on,
     midi_note_off,
@@ -30,7 +30,7 @@ class PlayAll(App):
         return MainLayout()
 
     def on_start(self):
-        self.midi = Syntesizer()
+        self.midi = Synthesizer()
         self.instruments = cycle(midi_instruments.items())
         Clock.schedule_interval(self.change_note, 1)
 

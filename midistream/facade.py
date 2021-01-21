@@ -28,24 +28,24 @@ class ReverbPreset(IntEnum):
     ROOM = 3  #: Room preset
 
 
-class Syntesizer:
-    """MIDI Syntesizer."""
+class Synthesizer:
+    """MIDI Synthesizer."""
 
     _started = False
     _volume = 90
     _reverb = ReverbPreset.OFF
 
     def __init__(self):
-        if not Syntesizer._started:
+        if not Synthesizer._started:
             if not mididriver.init():
                 raise MIDIException("MIDI init failed.")
             self.volume = 90
             self.reverb = ReverbPreset.OFF
-            Syntesizer._started = True
+            Synthesizer._started = True
 
     @property
     def config(self) -> dict:
-        """Syntesizer configuration dictionary."""
+        """Synthesizer configuration dictionary."""
         return mididriver.get_config()
 
     @property
@@ -55,13 +55,13 @@ class Syntesizer:
         :getter: Returns the volume for the mix engine.
         :setter: Set the master volume for the mix engine.
         """
-        return Syntesizer._volume
+        return Synthesizer._volume
 
     @volume.setter
     def volume(self, volume):
         if not mididriver.set_volume(volume):
             raise MIDIException("Set master volume failed.")
-        Syntesizer._volume = volume
+        Synthesizer._volume = volume
 
     @property
     def reverb(self) -> ReverbPreset:
@@ -70,18 +70,18 @@ class Syntesizer:
         :getter: Returns curently used :class:`ReverbPreset`.
         :setter: Set :class:`ReverbPreset` to use.
         """
-        return Syntesizer._reverb
+        return Synthesizer._reverb
 
     @reverb.setter
     def reverb(self, reverb):
         if not mididriver.set_reverb(reverb):
             raise MIDIException("Set reverb effect preset failed.")
-        Syntesizer._reverb = reverb
+        Synthesizer._reverb = reverb
 
     def close(self):
         """Stop MIDI rendering and playback."""
         mididriver.close()
-        Syntesizer._started = False
+        Synthesizer._started = False
 
     def write(self, data: AnyStr):
         """Write MIDI commands to syntesizer stream."""

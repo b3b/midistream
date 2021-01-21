@@ -68,7 +68,8 @@ class Control(IntEnum):
 
     See: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
     """
-    modulation = 1  #: Modulation Wheel 
+
+    modulation = 1  #: Modulation Wheel
     volume = 7  #: Channel Volume
     pan = 10  #: Pan
     all_sound_off = 120  #: All Sound Off
