@@ -1,9 +1,9 @@
 import os
 from kivy.lang import Builder
 from kivy.uix.popup import Popup
-from midistream.helpers import midi_instruments, midi_notes, note_name
+from midistream.helpers import Note, midi_instruments, midi_notes, note_name
 from kivy.uix.togglebutton import ToggleButton
-from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty
+from kivy.properties import NumericProperty, StringProperty, ObjectProperty
 from kivy.uix.stacklayout import StackLayout
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), 'noteselect.kv'))
@@ -16,9 +16,11 @@ class SelectableButton(ToggleButton):
         if self.state != 'down':
             self._do_press()
 
+
 class NoteButton(SelectableButton):
+
     def format_text(self):
-        return "{}{}".format(self.value, note_name(self.value))
+        return note_name(self.value)
 
 class InstrumentButton(SelectableButton):
     title = StringProperty('')
@@ -47,9 +49,10 @@ class NotesLayout(ButtonsLayout):
 
     def add_buttons(self):
         for n in midi_notes:
-            button = NoteButton(value=n)
-            self.buttons.append(button)
-            self.add_widget(button)
+            if n >= Note.C0:
+                button = NoteButton(value=n)
+                self.buttons.append(button)
+                self.add_widget(button)
 
 
 class InstrumentsLayout(ButtonsLayout):

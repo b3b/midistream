@@ -2,7 +2,7 @@
 <JoystickButton>:
     size: 100, 100
     size_hint: None, None
-    title: "{}:{}{}".format(self.program, self.note, note_name(self.note))
+    title: "{:3}:{}".format(self.program, note_name(self.note))
 
     canvas:
         Color:

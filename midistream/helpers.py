@@ -91,13 +91,17 @@ midi_notes: List[int] = list(range(128))
 
 
 def note_name(note: int) -> str:
-    """Return name for a given note number.
+    """Returns name with accidental and octave number for a given note number.
 
+    >>> note_name(60)
+    'C4'
     >>> note_name(90)
-    'F#'
+    'Fs6'
     """
-    notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-    return notes[note % len(notes)]
+    notes = ["C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"]
+    name = notes[note % len(notes)]
+    octave = note // 12 - 1
+    return f"{name}{octave}"
 
 
 #: MIDI instruments number => name dictionary
