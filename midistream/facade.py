@@ -84,6 +84,6 @@ class Synthesizer:
         Synthesizer._started = False
 
     def write(self, data: AnyStr):
-        """Write MIDI commands to syntesizer stream."""
+        """Write MIDI commands to synhtesizer stream."""
         if not mididriver.write(bytes(data)):
             raise MIDIException("Write MIDI stream failed.")
