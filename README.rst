@@ -2,15 +2,13 @@ Midistream
 ==========
 
 Package to synthesize and playback MIDI commands from `Python for Android <https://github.com/kivy/python-for-android>`_.
-Using Sonivox EAS API, that is not officially suported by Android SDK/NDK.
-`Audiostream <https://github.com/kivy/audiostream>`_ is used for playback.
 
-Generated documentation: http://midistream.readthedocs.org
+*Midistream* is a wrapper for the Bill Farmer `Midi Driver <https://github.com/billthefarmer/mididriver>`_,
+and includes *libmidi.so* libraries from the MidiDriver build.
 
-Example of instrument on Android: `video <http://www.youtube.com/watch?v=Ltf9x0rJQMc>`_.
+`Previous <https://github.com/b3b/midistream/tree/py2>`_ version was using system version of Sonivox EAS library and `Audiostream <https://github.com/kivy/audiostream>`_ for playback.
 
-Since Android no longer allow access to the system `libsonivox.so`, application should contain its own copy of the library.
-*Midistream* uses compiled *libmidi.so* libraries from the Bill Farmer `Midi Driver <https://github.com/billthefarmer/mididriver>`_ releases.
+Generated documentation: https://midistream.readthedocs.org
 
 
 Related resources
@@ -18,12 +16,19 @@ Related resources
 
 * `EAS documentation <https://github.com/android/platform_external_sonivox/tree/master/docs>`_
 * `Android Issue 8201: Add a real-time MIDI API for Sonivox synthesizer <https://code.google.com/p/android/issues/detail?id=8201>`_
-* `Android midi driver using Sonivox EAS library <https://github.com/billthefarmer/mididriver>`_
+* `Android MIDI driver using Sonivox EAS library <https://github.com/billthefarmer/mididriver>`_
 
 
+Quick start development environment
+-----------------------------------
+
+*midistream* is included in `PythonHere <https://herethere.me/>`_ app, together with the `Jupyter Notebook <https://jupyter.org/>`_ it could be used as a development environment.
+
+Usage examples: https://herethere.me/examples/midi.html
+
+  
 Build
 -----
-
 
 The following instructions are for building app with `buildozer <https://github.com/kivy/buildozer/>`_ tool.
 

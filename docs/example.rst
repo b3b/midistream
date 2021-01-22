@@ -1,8 +1,8 @@
 Usage Example
 -------------
 
-    >>> from midistream import ReverbPreset, Syntesizer
-    >>> midi = Syntesizer()
+    >>> from midistream import ReverbPreset, Synthesizer
+    >>> midi = Synthesizer()
     >>> midi.config
     {'libVersion': 50727438, 'checkedVersion': 0, 'ma3xVoices': 64, 'numChannels': 2, 'sampleRate': 22050, 'mixBufferSize': 128, 'filterEnabled': 1, 'buildTimeStamp': 1195621085, 'buildGUID': b'1feda229-b9a8-45e9-96f4-73c0a80e7220'}
     >>> midi.volume
@@ -13,5 +13,5 @@ Usage Example
     >>> import time ; time.sleep(2)
     >>> midi.write([0x80, 60, 127]) # Off middle C note with maximum velocity
     # Using helpers
-    >>> from midistream.helpers import midi_note_off
-    >>> midi.write_short(midi_note_off(60))
+    >>> from midistream.helpers import Note, midi_note_on
+    >>> midi.write(midi_note_on(Note.C4) + midi_note_on(Note.Es5))
