@@ -14,6 +14,7 @@ setup(
     name="midistream",
     packages=["midistream"],
     cmdclass={"build_ext": build_ext},
+    setup_requires=['setuptools_scm'],
     ext_modules=[
         Extension(
             "libmidi",
