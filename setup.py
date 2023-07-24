@@ -14,6 +14,9 @@ setup(
     name="midistream",
     packages=["midistream"],
     cmdclass={"build_ext": build_ext},
+    setup_requires=['setuptools_scm',
+                    'setuptools>=18.0',
+                    'cython'],
     ext_modules=[
         Extension(
             "libmidi",
