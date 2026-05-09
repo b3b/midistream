@@ -8,11 +8,6 @@ try:
 except ImportError:
     traceback.print_exc()
 
-try:
-    import libmidi  # noqa
-except ImportError:
-    pass
-
 
 class MIDIException(Exception):
     """MIDI error."""
