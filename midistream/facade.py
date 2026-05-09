@@ -1,12 +1,14 @@
 """MIDI rendering and playback methods."""
 from enum import IntEnum
 from typing import AnyStr
-import traceback
 
 try:
     from . import mididriver
-except ImportError:
-    traceback.print_exc()
+except ImportError as exc:
+    mididriver = None
+    _mididriver_import_error = exc
+else:
+    _mididriver_import_error = None
 
 
 class MIDIException(Exception):
@@ -31,6 +33,9 @@ class Synthesizer:
     _reverb = ReverbPreset.OFF
 
     def __init__(self):
+        if _mididriver_import_error is not None:
+            raise MIDIException("MIDI driver is unavailable.") from _mididriver_import_error
+
         if not Synthesizer._started:
             if not mididriver.init():
                 raise MIDIException("MIDI init failed.")

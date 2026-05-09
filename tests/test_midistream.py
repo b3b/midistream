@@ -37,6 +37,7 @@ import midistream.facade as facade
 from midistream import MIDIException, Synthesizer, ReverbPreset
 
 facade.mididriver = mididriver
+facade._mididriver_import_error = None
 
 
 @pytest.fixture(autouse=True)
@@ -45,6 +46,8 @@ def uninitialized_midi():
     Synthesizer._volume = 90
     Synthesizer._reverb = ReverbPreset.OFF
     mididriver._result = 1
+    facade.mididriver = mididriver
+    facade._mididriver_import_error = None
 
 
 def test_initizlized():
@@ -56,6 +59,19 @@ def test_init_error():
     mididriver._result = 0
     with pytest.raises(MIDIException):
         Synthesizer()
+    assert not Synthesizer._started
+
+
+def test_missing_mididriver_raises_midi_exception(monkeypatch):
+    import_error = ImportError("missing libmidi.so")
+
+    monkeypatch.setattr(facade, "_mididriver_import_error", import_error)
+    monkeypatch.setattr(facade, "mididriver", None)
+
+    with pytest.raises(MIDIException, match="MIDI driver is unavailable") as exc_info:
+        Synthesizer()
+
+    assert exc_info.value.__cause__ is import_error
     assert not Synthesizer._started
 
 
