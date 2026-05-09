@@ -89,6 +89,28 @@ def test_android_build_detection(monkeypatch):
     assert setup.is_android_build()
 
 
+def test_debug_p4a_context_prints_android_environment(monkeypatch, capsys):
+    monkeypatch.setenv("ANDROIDAPI", "35")
+    monkeypatch.setenv("P4A_ARCH", "arm64-v8a")
+
+    setup.debug_p4a_context("test")
+
+    output = capsys.readouterr().out
+
+    assert "[midistream] ===== test =====" in output
+    assert "[midistream] ANDROIDAPI=35" in output
+    assert "[midistream] P4A_ARCH=arm64-v8a" in output
+    assert "[midistream] ===== end test =====" in output
+
+
+def test_debug_p4a_context_is_quiet_outside_android(monkeypatch, capsys):
+    monkeypatch.delenv("ANDROIDAPI", raising=False)
+
+    setup.debug_p4a_context("test")
+
+    assert capsys.readouterr().out == ""
+
+
 @pytest.mark.functional
 def test_functional_downloads_and_extracts_mididriver_aar(tmp_path, monkeypatch):
     build_dir, include_dir = make_fake_p4a_build(tmp_path)

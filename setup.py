@@ -7,9 +7,8 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-from distutils.command.install import install
-from distutils.core import setup
-from distutils.extension import Extension
+from setuptools import setup
+from setuptools.command.install import install
 
 
 PACKAGE_ROOT = Path(__file__).parent
@@ -40,6 +39,26 @@ def read_package_version():
 
 def is_android_build():
     return "ANDROIDAPI" in os.environ
+
+
+def debug_p4a_context(stage):
+    if not is_android_build():
+        return
+
+    print(f"[midistream] ===== {stage} =====")
+
+    for key in (
+        "ANDROIDAPI",
+        "ARCH",
+        "P4A_ARCH",
+        "CPPFLAGS",
+        "LDFLAGS",
+    ):
+        value = os.environ.get(key)
+        if value:
+            print(f"[midistream] {key}={value}")
+
+    print(f"[midistream] ===== end {stage} =====")
 
 
 class P4APathParser:
@@ -144,6 +163,11 @@ def download_mididriver_aar(cache_dir):
 
 def install_mididriver_libs_from_aar():
     paths = P4APathParser()
+
+    print(f"[midistream] p4a build dir: {paths.build_dir}")
+    print(f"[midistream] p4a dist name: {paths.distribution_name}")
+    print(f"[midistream] p4a native libs root: {paths.native_libs_root}")
+
     aar_path = download_mididriver_aar(paths.build_dir / "midistream_cache")
     copied = 0
 
@@ -182,23 +206,18 @@ def install_mididriver_libs_from_aar():
     if copied == 0:
         raise RuntimeError(f"No libmidi.so files copied from {aar_path}")
 
+    print(f"[midistream] installed {copied} libmidi.so files")
+
 
 class InstallMidistream(install):
     def run(self):
+        debug_p4a_context("install.run")
+
         if is_android_build():
             install_mididriver_libs_from_aar()
 
         super().run()
 
-
-try:
-    from Cython.Distutils import build_ext
-except ImportError:
-    from distutils.command.build_ext import build_ext
-
-    sources = ["mididriver.c"]
-else:
-    sources = ["mididriver.pyx"]
 
 def main():
     setup(
@@ -206,25 +225,8 @@ def main():
         version=read_package_version(),
         packages=["midistream"],
         cmdclass={
-            "build_ext": build_ext,
             "install": InstallMidistream,
         },
-        setup_requires=['setuptools_scm',
-                        'setuptools>=18.0',
-                        'cython'],
-        ext_modules=[
-            Extension(
-                "libmidi",
-                sources=["midi.pyx"],
-                extra_link_args=["-o", "./libmidi.so"],
-            ),
-            Extension(
-                "midistream.mididriver",
-                sources=sources,
-                libraries=["midi"],
-                extra_link_args=["-L", "."],
-            ),
-        ],
     )
 
 
