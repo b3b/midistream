@@ -11,9 +11,9 @@
 #include <stdio.h>
 
 typedef uint8_t EAS_U8;
-typedef uint32_t EAS_U32;
-typedef int32_t EAS_I32;
-typedef uint32_t EAS_BOOL;
+typedef unsigned long EAS_U32;
+typedef long EAS_I32;
+typedef unsigned EAS_BOOL;
 typedef char EAS_CHAR;
 
 typedef struct {

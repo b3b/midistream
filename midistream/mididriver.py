@@ -3,11 +3,10 @@
 import ctypes
 
 EAS_U8 = ctypes.c_uint8
-EAS_U32 = ctypes.c_uint32
-EAS_I32 = ctypes.c_int32
-EAS_BOOL = ctypes.c_uint32
+EAS_U32 = ctypes.c_ulong
+EAS_I32 = ctypes.c_long
+EAS_BOOL = ctypes.c_uint
 JBOOLEAN = ctypes.c_uint8
-JINT = ctypes.c_int32
 
 
 class S_EAS_LIB_CONFIG(ctypes.Structure):
@@ -20,7 +19,7 @@ class S_EAS_LIB_CONFIG(ctypes.Structure):
         ("mixBufferSize", EAS_I32),
         ("filterEnabled", EAS_BOOL),
         ("buildTimeStamp", EAS_U32),
-        ("buildGUID", ctypes.c_char_p),
+        ("buildGUID", ctypes.c_void_p),
     ]
 
 
@@ -46,14 +45,14 @@ def _configure_library(lib):
 
     lib.midi_write.argtypes = [
         ctypes.POINTER(EAS_U8),
-        JINT,
+        EAS_I32,
     ]
     lib.midi_write.restype = JBOOLEAN
 
-    lib.midi_setVolume.argtypes = [JINT]
+    lib.midi_setVolume.argtypes = [EAS_I32]
     lib.midi_setVolume.restype = JBOOLEAN
 
-    lib.midi_setReverb.argtypes = [JINT]
+    lib.midi_setReverb.argtypes = [EAS_I32]
     lib.midi_setReverb.restype = JBOOLEAN
     return lib
 
@@ -69,7 +68,16 @@ def get_config():
     if not hasattr(_lib, "EAS_Config"):
         raise NotImplementedError("EAS_Config is not exported by libmidi.so")
 
-    config = _lib.EAS_Config().contents
+    config_pointer = _lib.EAS_Config()
+    if not config_pointer:
+        raise RuntimeError("EAS_Config returned NULL")
+
+    return _config_to_dict(config_pointer.contents)
+
+
+def _config_to_dict(config):
+    build_guid = _read_build_guid(config.buildGUID)
+
     return {
         "libVersion": int(config.libVersion),
         "checkedVersion": bool(config.checkedVersion),
@@ -79,8 +87,15 @@ def get_config():
         "mixBufferSize": int(config.mixBufferSize),
         "filterEnabled": bool(config.filterEnabled),
         "buildTimeStamp": int(config.buildTimeStamp),
-        "buildGUID": config.buildGUID.decode() if config.buildGUID else "",
+        "buildGUID": build_guid,
     }
+
+
+def _read_build_guid(address):
+    if not address:
+        return b""
+
+    return ctypes.cast(address, ctypes.c_char_p).value or b""
 
 
 def close():

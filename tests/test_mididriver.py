@@ -32,6 +32,7 @@ class FakeMidiLib:
         self.midi_setReverb = FakeFunc(
             lambda reverb: self._record("midi_setReverb", reverb)
         )
+        self._guid_buffer = ctypes.create_string_buffer(b"test-guid")
 
         if with_config:
             self.EAS_Config = FakeFunc(self._config)
@@ -54,7 +55,7 @@ class FakeMidiLib:
         config.mixBufferSize = 512
         config.filterEnabled = 0
         config.buildTimeStamp = 123456789
-        config.buildGUID = b"test-guid"
+        config.buildGUID = ctypes.cast(self._guid_buffer, ctypes.c_void_p).value
         return ctypes.pointer(config)
 
 
@@ -99,13 +100,40 @@ def test_import_configures_ctypes_function_signatures(monkeypatch):
     assert fake_lib.midi_shutdown.restype is mididriver.JBOOLEAN
     assert fake_lib.midi_write.argtypes == [
         ctypes.POINTER(mididriver.EAS_U8),
-        mididriver.JINT,
+        mididriver.EAS_I32,
     ]
     assert fake_lib.midi_write.restype is mididriver.JBOOLEAN
-    assert fake_lib.midi_setVolume.argtypes == [mididriver.JINT]
+    assert fake_lib.midi_setVolume.argtypes == [mididriver.EAS_I32]
     assert fake_lib.midi_setVolume.restype is mididriver.JBOOLEAN
-    assert fake_lib.midi_setReverb.argtypes == [mididriver.JINT]
+    assert fake_lib.midi_setReverb.argtypes == [mididriver.EAS_I32]
     assert fake_lib.midi_setReverb.restype is mididriver.JBOOLEAN
+
+
+def test_config_struct_matches_native_layout(monkeypatch):
+    fake_lib = FakeMidiLib()
+    mididriver = load_mididriver(monkeypatch, fake_lib)
+
+    class ExpectedConfig(ctypes.Structure):
+        _fields_ = [
+            ("libVersion", ctypes.c_ulong),
+            ("checkedVersion", ctypes.c_uint),
+            ("maxVoices", ctypes.c_long),
+            ("numChannels", ctypes.c_long),
+            ("sampleRate", ctypes.c_long),
+            ("mixBufferSize", ctypes.c_long),
+            ("filterEnabled", ctypes.c_uint),
+            ("buildTimeStamp", ctypes.c_ulong),
+            ("buildGUID", ctypes.c_void_p),
+        ]
+
+    assert ctypes.sizeof(mididriver.S_EAS_LIB_CONFIG) == ctypes.sizeof(ExpectedConfig)
+    assert {
+        name: getattr(mididriver.S_EAS_LIB_CONFIG, name).offset
+        for name, _field_type in mididriver.S_EAS_LIB_CONFIG._fields_
+    } == {
+        name: getattr(ExpectedConfig, name).offset
+        for name, _field_type in ExpectedConfig._fields_
+    }
 
 
 def test_init_and_shutdown_return_boolean_results(monkeypatch):
@@ -135,7 +163,7 @@ def test_get_config_returns_python_dictionary(monkeypatch):
         "mixBufferSize": 512,
         "filterEnabled": False,
         "buildTimeStamp": 123456789,
-        "buildGUID": "test-guid",
+        "buildGUID": b"test-guid",
     }
 
 
