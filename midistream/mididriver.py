@@ -24,34 +24,41 @@ class S_EAS_LIB_CONFIG(ctypes.Structure):
     ]
 
 
-try:
-    _lib = ctypes.CDLL("libmidi.so")
-except OSError as exc:
-    raise ImportError("Unable to load libmidi.so") from exc
+def _load_library():
+    try:
+        return ctypes.CDLL("libmidi.so")
+    except OSError as exc:
+        raise ImportError("Unable to load libmidi.so") from exc
 
-try:
-    _lib.EAS_Config.argtypes = []
-    _lib.EAS_Config.restype = ctypes.POINTER(S_EAS_LIB_CONFIG)
-except AttributeError:
-    pass
 
-_lib.midi_init.argtypes = []
-_lib.midi_init.restype = JBOOLEAN
+def _configure_library(lib):
+    try:
+        lib.EAS_Config.argtypes = []
+        lib.EAS_Config.restype = ctypes.POINTER(S_EAS_LIB_CONFIG)
+    except AttributeError:
+        pass
 
-_lib.midi_shutdown.argtypes = []
-_lib.midi_shutdown.restype = JBOOLEAN
+    lib.midi_init.argtypes = []
+    lib.midi_init.restype = JBOOLEAN
 
-_lib.midi_write.argtypes = [
-    ctypes.POINTER(EAS_U8),
-    JINT,
-]
-_lib.midi_write.restype = JBOOLEAN
+    lib.midi_shutdown.argtypes = []
+    lib.midi_shutdown.restype = JBOOLEAN
 
-_lib.midi_setVolume.argtypes = [JINT]
-_lib.midi_setVolume.restype = JBOOLEAN
+    lib.midi_write.argtypes = [
+        ctypes.POINTER(EAS_U8),
+        JINT,
+    ]
+    lib.midi_write.restype = JBOOLEAN
 
-_lib.midi_setReverb.argtypes = [JINT]
-_lib.midi_setReverb.restype = JBOOLEAN
+    lib.midi_setVolume.argtypes = [JINT]
+    lib.midi_setVolume.restype = JBOOLEAN
+
+    lib.midi_setReverb.argtypes = [JINT]
+    lib.midi_setReverb.restype = JBOOLEAN
+    return lib
+
+
+_lib = _configure_library(_load_library())
 
 
 def init():
