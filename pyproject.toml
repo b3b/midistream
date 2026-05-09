@@ -19,3 +19,7 @@ version = {attr = "midistream.version.__version__"}
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+addopts = "-m 'not functional'"
+markers = [
+    "functional: tests that use external services or real network downloads",
+]
