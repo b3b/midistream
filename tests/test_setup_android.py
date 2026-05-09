@@ -2,6 +2,7 @@ import hashlib
 import zipfile
 
 import pytest
+from setuptools.dist import Distribution
 
 import setup
 
@@ -87,6 +88,37 @@ def test_android_build_detection(monkeypatch):
 
     monkeypatch.setenv("ANDROIDAPI", "35")
     assert setup.is_android_build()
+
+
+def test_bdist_wheel_runs_android_hook(monkeypatch):
+    calls = []
+
+    def fake_hook(stage):
+        calls.append(stage)
+
+    def fake_bdist_wheel_run(command):
+        calls.append("base bdist_wheel")
+
+    monkeypatch.setattr(setup, "maybe_install_mididriver_libs", fake_hook)
+    monkeypatch.setattr(setup.bdist_wheel, "run", fake_bdist_wheel_run)
+
+    command = setup.BDistWheelMidistream(Distribution())
+    command.run()
+
+    assert calls == ["bdist_wheel.run", "base bdist_wheel"]
+
+
+def test_maybe_install_mididriver_libs_is_quiet_outside_android(monkeypatch, capsys):
+    monkeypatch.delenv("ANDROIDAPI", raising=False)
+    monkeypatch.setattr(
+        setup,
+        "install_mididriver_libs_from_aar",
+        lambda: pytest.fail("unexpected Android AAR install"),
+    )
+
+    setup.maybe_install_mididriver_libs("test")
+
+    assert capsys.readouterr().out == ""
 
 
 def test_debug_p4a_context_prints_android_environment(monkeypatch, capsys):

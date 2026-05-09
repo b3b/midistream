@@ -9,6 +9,7 @@ from pathlib import Path
 
 from setuptools import setup
 from setuptools.command.install import install
+from wheel.bdist_wheel import bdist_wheel
 
 
 PACKAGE_ROOT = Path(__file__).parent
@@ -209,13 +210,23 @@ def install_mididriver_libs_from_aar():
     print(f"[midistream] installed {copied} libmidi.so files")
 
 
+def maybe_install_mididriver_libs(stage):
+    debug_p4a_context(stage)
+
+    if is_android_build():
+        install_mididriver_libs_from_aar()
+
+
 class InstallMidistream(install):
     def run(self):
-        debug_p4a_context("install.run")
+        maybe_install_mididriver_libs("install.run")
 
-        if is_android_build():
-            install_mididriver_libs_from_aar()
+        super().run()
 
+
+class BDistWheelMidistream(bdist_wheel):
+    def run(self):
+        maybe_install_mididriver_libs("bdist_wheel.run")
         super().run()
 
 
@@ -225,6 +236,7 @@ def main():
         version=read_package_version(),
         packages=["midistream"],
         cmdclass={
+            "bdist_wheel": BDistWheelMidistream,
             "install": InstallMidistream,
         },
     )
