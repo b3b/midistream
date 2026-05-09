@@ -1,4 +1,4 @@
-.PHONY: test test-functional sync lock
+.PHONY: test test-functional sync lock clean
 
 test: sync
 	uv run pytest -q
@@ -11,3 +11,9 @@ sync:
 
 lock:
 	uv lock
+
+libmidi.so: stub_midi.c
+	gcc -shared -fPIC stub_midi.c -o libmidi.so
+
+clean:
+	rm -f libmidi.so
