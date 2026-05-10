@@ -1,0 +1,66 @@
+name: Build demo Android package
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-demo-android:
+    name: Build examples/demo Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v4
+
+      - name: Build Android APK with Buildozer Docker image
+        shell: bash
+        run: |
+          docker run --rm \
+            -v "$PWD":/home/user/hostcwd \
+            -w /home/user/hostcwd/examples/demo \
+            kivy/buildozer:latest \
+            android debug        
+
+      - name: Find APK
+        id: apk
+        shell: bash
+        run: |
+          apk="$(find examples/demo/bin -name '*.apk' -type f | head -n 1)"
+          if [[ -z "$apk" ]]; then
+            echo "No APK found"
+            exit 1
+          fi
+          echo "filename=$apk" >> "$GITHUB_OUTPUT"
+          echo "APK: $apk"
+
+      - name: List APK result
+        shell: bash
+        run: |
+          ls -lh "${{ steps.apk.outputs.filename }}"
+          sha256sum "${{ steps.apk.outputs.filename }}"
+
+      - name: Smoke-check bundled libmidi.so
+        shell: bash
+        run: |
+          unzip -l "${{ steps.apk.outputs.filename }}" | grep 'lib/.*/libmidi.so'
+
+      - name: Upload APK workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: midistream-demo-android
+          path: ${{ steps.apk.outputs.filename }}
+          if-no-files-found: error
+
+      - name: Create GitHub release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ github.ref_name }}
+          files: ${{ steps.apk.outputs.filename }}
+          generate_release_notes: true
