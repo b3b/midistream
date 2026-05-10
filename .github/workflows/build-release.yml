@@ -13,6 +13,8 @@ jobs:
   build-demo-android:
     name: Build examples/demo Android APK
     runs-on: ubuntu-latest
+    env:
+      BUILDOZER_BUILD_LOG: buildozer-build.log
 
     steps:
       - name: Checkout commit
@@ -21,11 +23,12 @@ jobs:
       - name: Build Android APK with Buildozer Docker image
         shell: bash
         run: |
+          set -o pipefail
           docker run --rm \
             -v "$PWD":/home/user/hostcwd \
             -w /home/user/hostcwd/examples/demo \
             kivy/buildozer:latest \
-            android debug        
+            android debug 2>&1 | tee "$BUILDOZER_BUILD_LOG"
 
       - name: Find APK
         id: apk
@@ -56,6 +59,20 @@ jobs:
           name: midistream-demo-android
           path: ${{ steps.apk.outputs.filename }}
           if-no-files-found: error
+
+      - name: Upload Buildozer build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buildozer-build-log
+          path: ${{ env.BUILDOZER_BUILD_LOG }}
+          if-no-files-found: ignore
+
+      - name: Check Buildozer build log
+        shell: bash
+        run: |
+          grep -F "# Android packaging done!" "$BUILDOZER_BUILD_LOG"
+          grep -E "# APK .+ available in the bin directory" "$BUILDOZER_BUILD_LOG"
 
       - name: Create GitHub release
         if: github.ref_type == 'tag'

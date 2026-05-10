@@ -8,6 +8,8 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 
 requirements =
+             python3==3.11.5,
+             hostpython3==3.11.5,
              kivy==2.3.1,
              filetype,
              https://github.com/b3b/midistream/archive/master.zip,
