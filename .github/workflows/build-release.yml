@@ -71,6 +71,7 @@ jobs:
       - name: Check Buildozer build log
         shell: bash
         run: |
+          grep -E "\[midistream\] installed [1-9][0-9]* libmidi\.so files" "$BUILDOZER_BUILD_LOG"
           grep -F "# Android packaging done!" "$BUILDOZER_BUILD_LOG"
           grep -E "# APK .+ available in the bin directory" "$BUILDOZER_BUILD_LOG"
 

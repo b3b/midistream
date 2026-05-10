@@ -21,7 +21,7 @@ android.accept_sdk_license = True
 
 android.archs = arm64-v8a, armeabi-v7a, x86_64
 
-p4a.branch = master
+p4a.branch = v2024.01.21
 
 orientation = landscape
 fullscreen = 0
