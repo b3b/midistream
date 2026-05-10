@@ -21,6 +21,8 @@ MIDIDRIVER_AAR_URL = (
     "https://github.com/b3b/mididriver/releases/download/"
     f"v{MIDIDRIVER_VERSION}/MidiDriver-v{MIDIDRIVER_VERSION}.aar"
 )
+MIDIDRIVER_SOURCE_URL = "https://github.com/billthefarmer/mididriver"
+MIDIDRIVER_LICENSE = "Apache-2.0"
 
 
 def read_package_version():
@@ -168,6 +170,10 @@ def install_mididriver_libs_from_aar():
     print(f"[midistream] p4a build dir: {paths.build_dir}")
     print(f"[midistream] p4a dist name: {paths.distribution_name}")
     print(f"[midistream] p4a native libs root: {paths.native_libs_root}")
+    print(
+        f"[midistream] bundled MidiDriver libmidi.so source: {MIDIDRIVER_SOURCE_URL} "
+        f"({MIDIDRIVER_LICENSE})"
+    )
 
     aar_path = download_mididriver_aar(paths.build_dir / "midistream_cache")
     copied = 0

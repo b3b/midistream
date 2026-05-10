@@ -3,8 +3,9 @@ Midistream
 
 Package to synthesize and playback MIDI commands from `Python for Android <https://github.com/kivy/python-for-android>`_.
 
-*Midistream* is a wrapper for the Bill Farmer `Midi Driver <https://github.com/billthefarmer/mididriver>`_,
+*Midistream* is a wrapper for Bill Farmer's `Midi Driver <https://github.com/billthefarmer/mididriver>`_,
 and includes *libmidi.so* libraries from the MidiDriver build.
+The bundled MidiDriver components are licensed under the `Apache License 2.0 <https://github.com/billthefarmer/mididriver/blob/master/Apache-2.0.txt>`_.
 
 `Previous <https://github.com/b3b/midistream/tree/py2>`_ version was using system version of Sonivox EAS library and `Audiostream <https://github.com/kivy/audiostream>`_ for playback.
 
