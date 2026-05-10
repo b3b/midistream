@@ -1,6 +1,10 @@
-midistream.c
+__pycache__/
 build/
 docs/_build/
+dist/
+sdist/
+wheels/
+*.egg-info
 *~
 *.swp
 *.sublime-workspace

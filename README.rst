@@ -3,8 +3,9 @@ Midistream
 
 Package to synthesize and playback MIDI commands from `Python for Android <https://github.com/kivy/python-for-android>`_.
 
-*Midistream* is a wrapper for the Bill Farmer `Midi Driver <https://github.com/billthefarmer/mididriver>`_,
+*Midistream* is a wrapper for Bill Farmer's `Midi Driver <https://github.com/billthefarmer/mididriver>`_,
 and includes *libmidi.so* libraries from the MidiDriver build.
+The bundled MidiDriver components are licensed under the `Apache License 2.0 <https://github.com/billthefarmer/mididriver/blob/master/Apache-2.0.txt>`_.
 
 `Previous <https://github.com/b3b/midistream/tree/py2>`_ version was using system version of Sonivox EAS library and `Audiostream <https://github.com/kivy/audiostream>`_ for playback.
 
@@ -32,26 +33,22 @@ Build
 
 The following instructions are for building app with `buildozer <https://github.com/kivy/buildozer/>`_ tool.
 
-*buildozer.spec* requirements should include *midistream* and *mididriver*,
-path to *midistream* recipes directory should be set::
+*buildozer.spec* requirements should include *midistream*::
 
    requirements = 
-               mididriver,
                https://github.com/b3b/midistream/archive/master.zip,
 
-  p4a.local_recipes = /path/to/cloned/repo/recipes
 
-
-App configuration example: `buildozer.spec <https://github.com/b3b/midistream/blob/master/examples/instrument/buildozer.spec>`_
+App configuration example: `buildozer.spec <https://github.com/b3b/midistream/blob/master/examples/demo/buildozer.spec>`_
 
 
 Examples
 --------
 
-See examples/ directory.
+See `examples/ <https://github.com/b3b/midistream/tree/master/examples>`_ directory.
 
+`examples/demo <https://github.com/b3b/midistream/tree/master/examples/demo>`_ is an app that shows how to initialize the
+synthesizer, inspect configuration, set volume and reverb, and play MIDI notes::
 
-examples/instrument could be build with *buildozer*::
-
-  cd examples/instrument
+  cd examples/demo
   buildozer android debug deploy run logcat
