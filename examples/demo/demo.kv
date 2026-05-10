@@ -69,9 +69,17 @@ BoxLayout:
             value: 90
             on_touch_up: app.on_volume_touch_up(self, args[1])
 
-    TextInput:
-        id: log_output
-        text: ""
-        readonly: True
-        multiline: True
-        cursor_blink: False
+    ScrollView:
+        id: log_scroll
+        do_scroll_x: False
+        do_scroll_y: True
+
+        Label:
+            id: log_output
+            text: ""
+            size_hint_y: None
+            height: max(self.texture_size[1], log_scroll.height)
+            halign: "left"
+            valign: "top"
+            text_size: self.width, None
+            on_texture_size: log_scroll.scroll_y = 0
