@@ -70,6 +70,10 @@ class P4APathParser:
         return os.environ.get("CPPFLAGS", "")
 
     @property
+    def ldflags(self):
+        return os.environ.get("LDFLAGS", "")
+
+    @property
     def python_path(self):
         match = re.search(
             r"-I(/[^\s]+/build/python-installs/[^/\s]+/)",
@@ -85,8 +89,16 @@ class P4APathParser:
         if match:
             return Path(match.group(1)).parents[2]
 
+        match = re.search(
+            r"-I(/[^\s]+/build/other_builds/python3/[^/\s]+/python3/"
+            r"android-build/android-root/include/python[0-9.]+)",
+            self.cppflags,
+        )
+        if match:
+            return Path(match.group(1))
+
         raise RuntimeError(
-            "Cannot find p4a python-installs path in CPPFLAGS: "
+            "Cannot find p4a Python path in CPPFLAGS: "
             f"{self.cppflags}"
         )
 
@@ -103,10 +115,31 @@ class P4APathParser:
 
     @property
     def build_dir(self):
+        path = self.python_path
+
+        for parent in (path, *path.parents):
+            if parent.name == "other_builds":
+                return parent.parent
+
         return self.python_installs_dir.parent
 
     @property
+    def libs_collection_arch_dir(self):
+        match = re.search(
+            r"(?:^|\s)-L(/[^\s]+/build/libs_collections/[^/\s]+/[^/\s]+)",
+            self.ldflags,
+        )
+        if match:
+            return Path(match.group(1))
+
+        return None
+
+    @property
     def distribution_name(self):
+        libs_arch_dir = self.libs_collection_arch_dir
+        if libs_arch_dir:
+            return libs_arch_dir.parent.name
+
         path = self.python_path
 
         while path.parent.name != "python-installs":
@@ -118,6 +151,10 @@ class P4APathParser:
 
     @property
     def native_libs_root(self):
+        libs_arch_dir = self.libs_collection_arch_dir
+        if libs_arch_dir:
+            return libs_arch_dir.parent
+
         return self.build_dir / "libs_collections" / self.distribution_name
 
 

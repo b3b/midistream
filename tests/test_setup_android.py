@@ -41,6 +41,33 @@ def test_p4a_path_parser_finds_native_libs_root(tmp_path, monkeypatch):
     assert paths.native_libs_root == build_dir / "libs_collections" / "demo"
 
 
+def test_p4a_path_parser_handles_other_builds_python_layout(tmp_path, monkeypatch):
+    build_dir = tmp_path / "build-arm64-v8a_armeabi-v7a_x86_64" / "build"
+    include_dir = (
+        build_dir
+        / "other_builds"
+        / "python3"
+        / "armeabi-v7a__ndk_target_22"
+        / "python3"
+        / "android-build"
+        / "android-root"
+        / "include"
+        / "python3.11"
+    )
+    libs_arch_dir = build_dir / "libs_collections" / "demo" / "armeabi-v7a"
+    include_dir.mkdir(parents=True)
+    libs_arch_dir.mkdir(parents=True)
+
+    monkeypatch.setenv("CPPFLAGS", f"-DANDROID -I{include_dir}")
+    monkeypatch.setenv("LDFLAGS", f"-lm -L{libs_arch_dir}")
+
+    paths = setup.P4APathParser()
+
+    assert paths.build_dir == build_dir
+    assert paths.distribution_name == "demo"
+    assert paths.native_libs_root == build_dir / "libs_collections" / "demo"
+
+
 def test_install_mididriver_libs_from_cached_aar(tmp_path, monkeypatch):
     build_dir, include_dir = make_fake_p4a_build(tmp_path)
     cache_dir = build_dir / "midistream_cache"
