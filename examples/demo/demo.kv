@@ -1,0 +1,77 @@
+#:kivy 2.0.0
+
+BoxLayout:
+    orientation: "vertical"
+    padding: "8dp"
+    spacing: "8dp"
+
+    Label:
+        id: status_label
+        text: app.status
+        size_hint_y: None
+        height: "32dp"
+        halign: "left"
+        valign: "middle"
+        text_size: self.size
+
+    BoxLayout:
+        size_hint_y: None
+        height: "44dp"
+        spacing: "8dp"
+
+        TextInput:
+            id: note_input
+            text: "C4"
+            multiline: False
+            size_hint_x: 0.22
+            on_text_validate: app.set_note_from_input()
+
+        Button:
+            text: "Note on"
+            on_release: app.note_on()
+
+        Button:
+            text: "Note off"
+            on_release: app.note_off()
+
+        Button:
+            text: "Run checks"
+            on_release: app.run_checks()
+
+    Spinner:
+        id: program_spinner
+        text: app.program_label(0)
+        values: app.program_labels
+        size_hint_y: None
+        height: "44dp"
+        on_text: app.on_program_selected(self, self.text)
+
+    BoxLayout:
+        size_hint_y: None
+        height: "44dp"
+        spacing: "8dp"
+
+        Spinner:
+            id: reverb_spinner
+            text: "OFF"
+            values: app.reverb_labels
+            size_hint_x: 0.45
+            on_text: app.on_reverb_selected(self, self.text)
+
+        Label:
+            text: "Volume"
+            size_hint_x: 0.18
+
+        Slider:
+            id: volume_slider
+            min: 0
+            max: 100
+            value: 90
+            on_touch_up: app.on_volume_touch_up(self, args[1])
+
+    TextInput:
+        id: log_output
+        text: ""
+        readonly: True
+        multiline: True
+        cursor_blink: False

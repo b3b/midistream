@@ -39,16 +39,16 @@ The following instructions are for building app with `buildozer <https://github.
                https://github.com/b3b/midistream/archive/master.zip,
 
 
-App configuration example: `buildozer.spec <https://github.com/b3b/midistream/blob/master/examples/instrument/buildozer.spec>`_
+App configuration example: `buildozer.spec <https://github.com/b3b/midistream/blob/master/examples/demo/buildozer.spec>`_
 
 
 Examples
 --------
 
-See examples/ directory.
+See `examples/ <https://github.com/b3b/midistream/tree/master/examples>`_ directory.
 
+`examples/demo <https://github.com/b3b/midistream/tree/master/examples/demo>`_ is an app that shows how to initialize the
+synthesizer, inspect configuration, set volume and reverb, and play MIDI notes::
 
-examples/instrument could be build with *buildozer*::
-
-  cd examples/instrument
+  cd examples/demo
   buildozer android debug deploy run logcat
