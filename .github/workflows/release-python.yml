@@ -1,0 +1,80 @@
+name: Release Python package
+
+on:
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: release-python-${{ github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    name: Release Python package
+    runs-on: ubuntu-22.04
+    environment:
+      name: pypi
+      url: https://pypi.org/project/midistream/
+
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Sync dependencies
+        run: make sync
+
+      - name: Validate release tag
+        id: meta
+        run: uv run python scripts/release/validate_tag.py "$GITHUB_REF_NAME"
+
+      - name: Write release version
+        run: uv run python scripts/release/write_version.py "${{ steps.meta.outputs.version }}"
+
+      - name: Run tests
+        run: make test
+
+      - name: Build sdist
+        run: make build-sdist
+
+      - name: Check sdist
+        run: make check-dist
+
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: midistream-dist
+          path: dist/*
+          if-no-files-found: error
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Write release notes
+        run: >
+          uv run python scripts/release/write_release_notes.py
+          "${{ steps.meta.outputs.tag }}"
+          "${{ steps.meta.outputs.version }}"
+          release-notes.md
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: Release ${{ steps.meta.outputs.tag }}
+          body_path: release-notes.md
+          files: dist/*

@@ -12,7 +12,7 @@ requirements =
              hostpython3==3.11.5,
              kivy==2.3.1,
              filetype,
-             https://github.com/b3b/midistream/archive/master.zip,
+             midistream,
 
 android.api = 35
 android.minapi = 22

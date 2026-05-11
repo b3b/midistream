@@ -1,0 +1,123 @@
+name: Smoke test and attach demo APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag, for example v0.3.0"
+        required: true
+        type: string
+      run_id:
+        description: "Build demo APK workflow run id"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  smoke-test-and-attach:
+    name: Smoke test and attach demo APK
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Sync dependencies
+        run: make sync
+
+      - name: Validate release tag
+        id: meta
+        run: uv run python scripts/release/validate_tag.py "${{ inputs.tag }}"
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: midistream-demo-apk
+          path: .
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Check APK
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ls -lh demo.apk
+          sha256sum demo.apk
+          unzip -t demo.apk
+
+      - name: Enable KVM
+        shell: bash
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | \
+            sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run APK on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          EXPECTED_MIDISTREAM_VERSION: ${{ steps.meta.outputs.version }}
+        with:
+          api-level: 35
+          target: default
+          arch: x86_64
+          profile: pixel_2
+          avd-name: midistream-smoke
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./scripts/release/smoke_test_demo_apk.sh
+
+      - name: Prepare release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TAG="${{ steps.meta.outputs.tag }}"
+          APK_NAME="midistream-demo-${TAG}.apk"
+          CHECKSUM_NAME="${APK_NAME}.sha256"
+
+          mkdir -p release-assets
+
+          cp demo.apk "release-assets/$APK_NAME"
+
+          cd release-assets
+          sha256sum "$APK_NAME" > "$CHECKSUM_NAME"
+
+          ls -lh
+          cat "$CHECKSUM_NAME"
+
+      - name: Attach APK to existing GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          files: |
+            release-assets/*.apk
+            release-assets/*.sha256
+          fail_on_unmatched_files: true
+
+      - name: Upload logcat
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-logcat
+          path: logcat.txt
+          if-no-files-found: ignore
+          retention-days: 8

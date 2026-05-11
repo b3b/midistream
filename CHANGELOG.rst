@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Unreleased
-----------
+0.3.0 - 2026-05-11
+------------------
 
 * Published ``midistream`` on PyPI for Buildozer installs, replacing the old
   GitHub ``master.zip`` requirement.

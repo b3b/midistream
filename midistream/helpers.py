@@ -67,7 +67,7 @@ def midi_command_increase_channel(command: List[int], inc: int) -> List[int]:
 class Control(IntEnum):
     """Control function number for Control Change messages.
 
-    See: https://www.midi.org/specifications-old/item/table-3-control-change-messages-data-bytes-2
+    See: https://midi.org/midi-1-0-control-change-messages
     """
 
     modulation = 1  #: Modulation Wheel

@@ -9,7 +9,7 @@ The bundled MidiDriver components are licensed under the `Apache License 2.0 <ht
 
 `Previous <https://github.com/b3b/midistream/tree/py2>`_ version was using system version of Sonivox EAS library and `Audiostream <https://github.com/kivy/audiostream>`_ for playback.
 
-Generated documentation: https://midistream.readthedocs.org
+Documentation: https://herethere.me/midistream
 
 
 Related resources
@@ -35,8 +35,7 @@ The following instructions are for building app with `buildozer <https://github.
 
 *buildozer.spec* requirements should include *midistream*::
 
-   requirements = 
-               https://github.com/b3b/midistream/archive/master.zip,
+   requirements = python3,kivy,midistream
 
 
 App configuration example: `buildozer.spec <https://github.com/b3b/midistream/blob/master/examples/demo/buildozer.spec>`_

@@ -9,7 +9,7 @@ test-functional: sync
 build-sdist: clean sync
 	uv run python -m build --sdist
 
-check-dist: build-sdist
+check-dist:
 	uv run twine check dist/*.tar.gz
 
 sync:

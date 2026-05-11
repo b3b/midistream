@@ -1,0 +1,189 @@
+name: Build demo APK
+
+on:
+  workflow_run:
+    workflows:
+      - Release Python package
+    types:
+      - completed
+
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing GitHub release tag, for example v0.3.0"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: write
+
+env:
+  PACKAGE_NAME: midistream
+  BUILDOZER_BUILD_LOG: buildozer-build.log
+
+jobs:
+  build-demo-apk:
+    name: Build examples/demo Android APK
+    runs-on: ubuntu-latest
+
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Resolve release source ref
+        id: source-ref
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "ref=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.source-ref.outputs.ref }}
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Sync dependencies
+        run: make sync
+
+      - name: Resolve release tag
+        id: tag
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TAG="${{ inputs.tag }}"
+          else
+            SHA="${{ github.event.workflow_run.head_sha }}"
+
+            git fetch --force --tags
+
+            TAG="$(git tag --points-at "$SHA" | grep '^v' | sort -V | tail -n 1 || true)"
+
+            if [[ -z "$TAG" ]]; then
+              echo "::error::No v* Git tag points at workflow_run head SHA $SHA"
+              exit 1
+            fi
+          fi
+
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Validate release tag
+        id: meta
+        run: uv run python scripts/release/validate_tag.py "${{ steps.tag.outputs.tag }}"
+
+      - name: Verify PyPI package is installable
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VERSION="${{ steps.meta.outputs.version }}"
+          CHECK_VENV="${RUNNER_TEMP:-/tmp}/midistream-pypi-check"
+
+          python -m venv "$CHECK_VENV"
+          . "$CHECK_VENV/bin/activate"
+
+          python -m pip install --upgrade pip
+
+          for attempt in {1..30}; do
+            echo "Attempt $attempt: installing ${PACKAGE_NAME}==$VERSION from PyPI"
+
+            if python -m pip install --no-cache-dir "${PACKAGE_NAME}==$VERSION"; then
+              CHECK_DIR="$(mktemp -d)"
+              cd "$CHECK_DIR"
+
+              python "$GITHUB_WORKSPACE/scripts/release/verify_installed_version.py" "$VERSION"
+              exit 0
+            fi
+
+            echo "PyPI package is not installable yet; retrying..."
+            sleep 10
+          done
+
+          echo "::error::Could not install ${PACKAGE_NAME}==$VERSION from PyPI"
+          exit 1
+
+      - name: Show demo requirements
+        run: grep -n "^requirements" examples/demo/buildozer.spec
+
+      - name: Build Android APK with Buildozer Docker image
+        shell: bash
+        run: |
+          set -o pipefail
+
+          docker run --rm \
+            -v "$PWD":/home/user/hostcwd \
+            -w /home/user/hostcwd/examples/demo \
+            kivy/buildozer:latest \
+            android debug 2>&1 | tee "$BUILDOZER_BUILD_LOG"
+
+      - name: Find APK
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          apk="$(find examples/demo/bin -name '*.apk' -type f | head -n 1)"
+
+          if [[ -z "$apk" ]]; then
+            echo "::error::No APK found"
+            exit 1
+          fi
+
+          cp "$apk" demo.apk
+
+          echo "APK: $apk"
+          ls -lh demo.apk
+          sha256sum demo.apk
+
+      - name: Smoke-check bundled libmidi.so
+        run: unzip -l demo.apk | grep 'lib/.*/libmidi.so'
+
+      - name: Check Buildozer build log
+        run: |
+          grep -E "\[midistream\] installed [1-9][0-9]* libmidi\.so files" "$BUILDOZER_BUILD_LOG"
+          grep -F "# Android packaging done!" "$BUILDOZER_BUILD_LOG"
+          grep -E "# APK .+ available in the bin directory" "$BUILDOZER_BUILD_LOG"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: midistream-demo-apk
+          path: demo.apk
+          if-no-files-found: error
+          retention-days: 8
+
+      - name: Upload Buildozer build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buildozer-build-log
+          path: ${{ env.BUILDOZER_BUILD_LOG }}
+          if-no-files-found: ignore
+          retention-days: 8
+
+      - name: Trigger smoke test workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run smoke-test-and-attach-demo-apk.yml \
+            --ref "${{ steps.meta.outputs.tag }}" \
+            -f tag="${{ steps.meta.outputs.tag }}" \
+            -f run_id="${{ github.run_id }}"
