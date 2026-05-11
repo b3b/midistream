@@ -9,7 +9,11 @@ from pathlib import Path
 
 from setuptools import setup
 from setuptools.command.install import install
-from wheel.bdist_wheel import bdist_wheel
+
+try:
+    from setuptools.command.bdist_wheel import bdist_wheel
+except ModuleNotFoundError:
+    from wheel.bdist_wheel import bdist_wheel
 
 
 PACKAGE_ROOT = Path(__file__).parent
@@ -278,6 +282,7 @@ def main():
         name="midistream",
         version=read_package_version(),
         packages=["midistream"],
+        install_requires=[],
         cmdclass={
             "bdist_wheel": BDistWheelMidistream,
             "install": InstallMidistream,

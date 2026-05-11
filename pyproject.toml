@@ -2,16 +2,40 @@
 name = "midistream"
 dynamic = ["version"]
 description = "Python for Android MIDI stream wrapper"
+readme = "README.rst"
 requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    {name = "b3b", email = "ash.b3b@gmail.com"},
+]
+keywords = ["android", "kivy", "midi", "python-for-android", "buildozer"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Operating System :: Android",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Multimedia :: Sound/Audio :: MIDI",
+]
 dependencies = []
 
+[project.urls]
+Source = "https://github.com/b3b/midistream"
+Documentation = "https://herethere.me/midistream"
+Changelog = "https://github.com/b3b/midistream/blob/master/CHANGELOG.rst"
+
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=70.1", "wheel"]
 
 [dependency-groups]
 dev = [
+    "build",
     "pytest",
     "setuptools",
+    "twine",
 ]
 
 [tool.setuptools.dynamic]
