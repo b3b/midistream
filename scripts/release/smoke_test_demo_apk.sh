@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ANDROID_PACKAGE_NAME="org.midistream.midistreamdemo"
+START_MARKER="MIDISTREAM_DEMO_START"
 PASS_MARKER="MIDISTREAM_DEMO_PASS"
 FAIL_MARKER="MIDISTREAM_DEMO_FAIL"
 
@@ -13,16 +14,20 @@ adb install -r -t demo.apk
 adb shell getprop ro.product.cpu.abi
 adb shell getprop ro.build.version.sdk
 adb shell pm path "$ANDROID_PACKAGE_NAME"
+adb shell cmd package resolve-activity --brief "$ANDROID_PACKAGE_NAME" || true
 
 adb logcat -c
 
 echo "Launching $ANDROID_PACKAGE_NAME"
 adb shell monkey -p "$ANDROID_PACKAGE_NAME" -c android.intent.category.LAUNCHER 1
+sleep 2
+adb shell pidof "$ANDROID_PACKAGE_NAME" || true
+adb shell dumpsys activity processes | grep -F "$ANDROID_PACKAGE_NAME" || true
 
 required_markers=(
   "MIDISTREAM_APP_BUILD"
   "$PASS_MARKER"
-  "MIDISTREAM_DEMO_START"
+  "$START_MARKER"
   "MIDISTREAM_VERSION=$EXPECTED_MIDISTREAM_VERSION"
   "MIDISTREAM_TEST_INIT=PASS"
   "MIDISTREAM_TEST_CONFIG=PASS"
@@ -35,7 +40,12 @@ echo "Waiting for smoke-test marker..."
 deadline=$((SECONDS + 120))
 
 while (( SECONDS < deadline )); do
-  adb logcat -d > logcat.txt
+  if ! adb logcat -d > logcat.txt; then
+    echo "::warning::adb logcat failed while waiting for $PASS_MARKER"
+    adb devices -l || true
+    sleep 2
+    continue
+  fi
 
   if grep -Fq "$FAIL_MARKER" logcat.txt; then
     echo "::error::Demo emitted failure marker"

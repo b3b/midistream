@@ -1,0 +1,127 @@
+name: Demo APK integration test
+run-name: Demo APK integration test (${{ github.ref_name }})
+
+on:
+  # Long-running opt-in workflow for validating examples/demo with p4a/Buildozer.
+  # Trigger it from the Actions UI, or push a branch such as demo/p4a-2026.05.09
+  workflow_dispatch:
+  push:
+    branches:
+      - "demo/**"
+
+permissions:
+  contents: read
+
+env:
+  BUILDOZER_BUILD_LOG: buildozer-build.log
+  EXPECTED_MIDISTREAM_VERSION: "0.0.0"
+
+jobs:
+  demo-apk-integration:
+    name: Build and test examples/demo APK
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v4
+
+      - name: Build demo requirements for tested commit
+        id: demo-requirements
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ARCHIVE_REQUIREMENT="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/archive/${GITHUB_SHA}.zip"
+          python scripts/release/replace_buildozer_requirement.py \
+            examples/demo/buildozer.spec \
+            midistream \
+            "$ARCHIVE_REQUIREMENT"
+
+      - name: Build Android APK with Buildozer Docker image
+        shell: bash
+        run: |
+          set -o pipefail
+
+          echo "APP_REQUIREMENTS=${{ steps.demo-requirements.outputs.requirements }}"
+
+          docker run --rm \
+            -e APP_REQUIREMENTS="${{ steps.demo-requirements.outputs.requirements }}" \
+            -v "$PWD":/home/user/hostcwd \
+            -w /home/user/hostcwd/examples/demo \
+            kivy/buildozer:latest \
+            android debug 2>&1 | tee "$BUILDOZER_BUILD_LOG"
+
+      - name: Find APK
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          apk="$(find examples/demo/bin -name '*.apk' -type f | head -n 1)"
+
+          if [[ -z "$apk" ]]; then
+            echo "::error::No APK found"
+            exit 1
+          fi
+
+          cp "$apk" demo.apk
+
+          echo "APK: $apk"
+          ls -lh demo.apk
+          sha256sum demo.apk
+          unzip -t demo.apk
+
+      - name: Smoke-check bundled libmidi.so
+        run: unzip -l demo.apk | grep 'lib/.*/libmidi.so'
+
+      - name: Check Buildozer build log
+        run: |
+          grep -E "\[midistream\] installed [1-9][0-9]* libmidi\.so files" "$BUILDOZER_BUILD_LOG"
+          grep -F "# Android packaging done!" "$BUILDOZER_BUILD_LOG"
+          grep -E "# APK .+ available in the bin directory" "$BUILDOZER_BUILD_LOG"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: midistream-demo-apk
+          path: demo.apk
+          if-no-files-found: error
+          retention-days: 8
+
+      - name: Enable KVM
+        shell: bash
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | \
+            sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run APK on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: default
+          arch: x86_64
+          profile: pixel_2
+          avd-name: midistream-smoke
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./scripts/release/smoke_test_demo_apk.sh
+
+      - name: Upload Buildozer build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buildozer-build-log
+          path: ${{ env.BUILDOZER_BUILD_LOG }}
+          if-no-files-found: ignore
+          retention-days: 8
+
+      - name: Upload logcat
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-logcat
+          path: logcat.txt
+          if-no-files-found: ignore
+          retention-days: 8
