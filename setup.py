@@ -283,6 +283,12 @@ def main():
         version=read_package_version(),
         packages=["midistream"],
         install_requires=[],
+        options={
+            "bdist_wheel": {
+                # Keep p4a from reusing a cached pure wheel and skipping libmidi.so copy hooks.
+                "plat_name": "unused-nocache",
+            },
+        },
         cmdclass={
             "bdist_wheel": BDistWheelMidistream,
             "install": InstallMidistream,
